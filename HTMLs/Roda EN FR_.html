@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roda Bar & Restaurant | Thornhill - Menu & Online Ordering</title>
-    <meta name="description" content="Roda Bar & Restaurant - 7359 Yonge St, Thornhill, ON. Modern menu, online ordering, order tracking. Managed by Mori Shojaie.">
-       
+    <title>Roda Bar & Grill</title>
+    
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Google Fonts -->
@@ -35,7 +34,8 @@
             align-items: center; 
             gap: 10px;
         }
-        .logo-svg { fill: var(--gold); height: 40px; width: 40px; }
+    .logo-svg { fill: var(--gold); height: 40px; width: 40px; }
+    .brand-logo { height: 40px; width: auto; display: inline-block; }
         .nav-link { color: var(--gold) !important; transition: 0.3s; font-weight: 500; }
         .nav-link:hover, .nav-link.active { color: #fff !important; }
 
@@ -77,20 +77,7 @@
             padding: 8px 20px; border-radius: 50px; margin-right: 10px; transition: 0.3s; 
         }
         .cat-btn.active, .cat-btn:hover { background: var(--gold); color: #000; }
-        /* Footer */
-        .footer {
-            background: linear-gradient(135deg, #000 0%, #111 100%);
-            border-top: 1px solid var(--gold);
-            padding: 60px 0 30px;
-        }
-        .manager-photo {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid var(--gold);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
+
         /* Admin & Inputs */
         .admin-panel { background: #222; padding: 20px; border-radius: 10px; border: 1px solid #444; }
         .form-control, .form-select { 
@@ -108,13 +95,11 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="#" @click.prevent="currentPage='menu'">
-                <!-- SVG LOGO -->
-                <svg class="logo-svg" viewBox="0 0 24 24">
-                    <path d="M11 9H9V2H7v7H5V2H3v7c0 2.12 1.66 3.84 3.75 3.97V22h2.5v-9.03C11.34 12.84 13 11.12 13 9V2h-2v7zm5-3v8h2.5v8H21V2c-2.76 0-5 2.24-5 4z"/>
-                </svg>
-                Roda Bar
-            </a>
+                <a class="navbar-brand" href="#" @click.prevent="currentPage='menu'">
+                    <!-- Use actual logo image if available -->
+                    <img src="public/img/logo.png" alt="Roda logo" class="brand-logo me-2" onerror="this.style.display='none'">
+                    <span>Roda Bar</span>
+                </a>
             
             <div class="d-flex align-items-center gap-3 order-lg-last ms-3">
                 <!-- Language Switcher -->
@@ -132,7 +117,7 @@
                     <li class="nav-item"><a class="nav-link" :class="{active: currentPage==='menu'}" href="#" @click="currentPage='menu'">{{ t.menu }}</a></li>
                     <li class="nav-item"><a class="nav-link" :class="{active: currentPage==='cart'}" href="#" @click="currentPage='cart'">{{ t.cart }} ({{ cartCount }})</a></li>
                     <li class="nav-item"><a class="nav-link" :class="{active: currentPage==='track'}" href="#" @click="currentPage='track'">{{ t.track }}</a></li>
-                    <li class="nav-item"><a class="nav-link" :class="{active: currentPage==='admin'}" href="#" @click="currentPage='admin'">Admin</a></li>
+                    <li class="nav-item"><a class="nav-link" :class="{active: currentPage==='admin'}" href="#" @click="currentPage='admin'">{{ t.admin }}</a></li>
                 </ul>
             </div>
         </div>
@@ -148,7 +133,7 @@
                     class="cat-btn" 
                     :class="{active: selectedCategory === cat}"
                     @click="selectedCategory = cat">
-                {{ cat }}
+                {{ translateCategory(cat) }}
             </button>
         </div>
 
@@ -257,19 +242,19 @@
 
     <!-- ADMIN PAGE -->
     <div v-if="currentPage === 'admin'" class="container page-section">
-        <h2 class="text-gold mb-4">Admin Dashboard</h2>
+    <h2 class="text-gold mb-4">{{ t.adminDashboard }}</h2>
         
         <div v-if="!isAdmin" class="row justify-content-center">
             <div class="col-md-4">
-                <input type="password" class="form-control mb-2" v-model="adminPass" placeholder="Password (613)">
-                <button class="btn btn-gold w-100" @click="loginAdmin">Login</button>
+                <input type="password" class="form-control mb-2" v-model="adminPass" :placeholder="t.adminPasswordPlaceholder">
+                <button class="btn btn-gold w-100" @click="loginAdmin">{{ t.admin }}</button>
             </div>
         </div>
 
         <div v-else>
             <ul class="nav nav-tabs border-secondary mb-4">
-                <li class="nav-item"><a class="nav-link" :class="{active: adminTab==='orders'}" href="#" @click="adminTab='orders'">Active Orders</a></li>
-                <li class="nav-item"><a class="nav-link" :class="{active: adminTab==='menu'}" href="#" @click="adminTab='menu'">Menu Manager</a></li>
+                <li class="nav-item"><a class="nav-link" :class="{active: adminTab==='orders'}" href="#" @click="adminTab='orders'">{{ t.activeOrders || 'Active Orders' }}</a></li>
+                <li class="nav-item"><a class="nav-link" :class="{active: adminTab==='menu'}" href="#" @click="adminTab='menu'">{{ t.menuManager }}</a></li>
             </ul>
 
             <!-- Orders Tab -->
@@ -283,17 +268,14 @@
                     <p v-if="o.email" class="small text-muted">User: {{ o.email }}</p>
                     <p v-if="o.custNote" class="small text-warning">Note: {{ o.custNote }}</p>
                     <select class="form-select w-auto" v-model="o.status" @change="saveOrders">
-                        <option>Submitted</option>
-                        <option>Cooking</option>
-                        <option>Ready</option>
-                        <option>Served</option>
+                        <option v-for="s in t.statusOptions" :key="s">{{ s }}</option>
                     </select>
                 </div>
             </div>
 
             <!-- Menu Editor Tab (Bilingual) -->
             <div v-if="adminTab === 'menu'">
-                <button class="btn btn-success mb-3" @click="addNewItem">+ Add New Item</button>
+                <button class="btn btn-success mb-3" @click="addNewItem">{{ t.addNewItem }}</button>
                 <div v-for="(item, idx) in menu" :key="idx" class="admin-panel mb-3">
                     <div class="row g-2">
                         <div class="col-md-3">
@@ -325,82 +307,24 @@
                             <textarea class="form-control form-control-sm" v-model="item.desc.fr"></textarea>
                         </div>
                         <div class="col-12">
-                            <label class="small text-muted">Image URLs (comma separated)</label>
+                            <label class="small text-muted">{{ t.imageUrlsLabel }}</label>
                             <input class="form-control form-control-sm" :value="item.images.join(', ')" @input="updateImages(item, $event)">
                         </div>
                         <div class="col-12">
                              <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" v-model="item.available">
-                                <label class="form-check-label text-white">Available</label>
+                                <label class="form-check-label text-white">{{ t.availableLabel }}</label>
                             </div>
                         </div>
                     </div>
                 </div>
-                <button class="btn btn-primary mt-3" @click="saveMenu">Save Changes</button>
+                <button class="btn btn-primary mt-3" @click="saveMenu">{{ t.menuManagerSave }}</button>
             </div>
         </div>
     </div>
 
 </div>
-<!-- Footer -->
-<footer class="footer mt-5">
-    <div class="container">
-        <div class="row g-5">
-            <!-- Location -->
-            <div class="col-lg-4">
-                <div class="logo mb-4 mx-auto d-block" style="width: 80px; height: 80px; font-size: 1.5rem;"></div>
-                <h4 class="text-gold mb-3 lang-text" data-en="Roda Bar &amp; Restaurant" data-fr="Roda Bar &amp; Restaurant">Roda Bar & Restaurant</h4>
-                <p class="lang-text" data-en="7359 Yonge St<br>Thornhill, ON L3T 2B3<br>Canada" data-fr="7359 Yonge St<br>Thornhill, ON L3T 2B3<br>Canada">7359 Yonge St<br>Thornhill, ON L3T 2B3<br>Canada</p>
-                <div class="mt-4">
-                    <a href="https://maps.google.com/?q=7359+Yonge+St,Thornhill,ON" target="_blank" class="btn btn-outline-light btn-sm">
-                        <i class="bi bi-geo-alt me-1"></i><span class="lang-text" data-en="Directions" data-fr="Itinéraire">Directions</span>
-                    </a>
-                </div>
-            </div>
 
-            <!-- Manager -->
-            <div class="col-lg-4 text-center">
-                <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltP7lR7IKxThk0kT3e5kQP//Z" alt="Mori Shojaie - Manager" class="manager-photo mb-3 mx-auto">
-                <h5 class="text-gold mb-2 lang-text" data-en="Mori Shojaie" data-fr="Mori Shojaie">Mori Shojaie</h5>
-                <p class="small lang-text" data-en="General Manager" data-fr="Directeur Général">General Manager</p>
-            </div>
-
-            <!-- Contact & Rating -->
-            <div class="col-lg-4">
-                <h5 class="text-gold mb-4 lang-text" data-en="Contact &amp; Reviews" data-fr="Contact &amp; Avis">Contact & Reviews</h5>
-                <div class="mb-4">
-                    <div class="d-flex align-items-center mb-2">
-                        <i class="bi bi-telephone text-gold me-2"></i>
-                        <span class="lang-text" data-en="(905) 731-RODA" data-fr="(905) 731-RODA">(905) 731-RODA</span>
-                    </div>
-                    <div class="d-flex align-items-center mb-2">
-                        <i class="bi bi-envelope text-gold me-2"></i>
-                        <span class="lang-text" data-en="info@rodabar.ca" data-fr="info@rodabar.ca">info@rodabar.ca</span>
-                    </div>
-                    <div class="d-flex align-items-center">
-                        <i class="bi bi-clock text-gold me-2"></i>
-                        <span class="lang-text" data-en="Open 11AM-11PM" data-fr="Ouvert 11h-23h">Open 11AM-11PM</span>
-                    </div>
-                </div>
-                
-                <!-- Rating -->
-                <div>
-                    <div class="d-flex align-items-center mb-2">
-                        <span class="star">★★★★★</span>
-                        <span class="ms-2 fw-bold text-gold">4.9</span>
-                        <span class="small text-muted ms-1">(1,247 reviews)</span>
-                    </div>
-                    <a href="#feedback" class="btn btn-outline-light btn-sm lang-text" data-en="Leave Review" data-fr="Laisser un avis">Leave Review</a>
-                </div>
-            </div>
-        </div>
-        
-        <hr class="my-5 opacity-25">
-        <div class="text-center">
-            <p class="mb-0 small text-muted lang-text" data-en="&copy; 2024 Roda Bar &amp; Restaurant. All rights reserved. | Made with ❤️ in Toronto." data-fr="&copy; 2024 Roda Bar &amp; Restaurant. Tous droits réservés. | Fait avec ❤️ à Toronto.">&copy; 2024 Roda Bar & Restaurant. All rights reserved. | Made with ❤️ in Toronto.</p>
-        </div>
-    </div>
-</footer>
 <script>
 const { createApp } = Vue;
 
@@ -464,7 +388,15 @@ const translations = {
         total: "Total", submitOrder: "Submit Order", note: "Note",
         emailPlaceholder: "Email for receipt (optional)", notePlaceholder: "Allergies or Special Requests?",
         trackTitle: "Track Order", enterOrderNum: "Enter Order #", status: "Status",
-        recentOrders: "My Recent Orders"
+        recentOrders: "My Recent Orders",
+    admin: "Admin", adminDashboard: "Admin Dashboard", adminPasswordPlaceholder: "Password (613)",
+    activeOrders: "Active Orders",
+    menuManager: "Menu Manager", addNewItem: "+ Add New Item",
+        statusOptions: ["Submitted","Cooking","Ready","Served"],
+        imageUrlsLabel: "Image URLs (comma separated)", availableLabel: "Available",
+        deleteConfirm: "Delete item?",
+        passwordWrong: "Wrong password",
+        menuManagerSave: "Save Changes",
     },
     fr: {
         menu: "Menu", cart: "Panier", track: "Suivre", ourMenu: "Notre Menu",
@@ -473,8 +405,26 @@ const translations = {
         total: "Total", submitOrder: "Commander", note: "Note",
         emailPlaceholder: "Email pour le reçu (optionnel)", notePlaceholder: "Allergies ou demandes spéciales?",
         trackTitle: "Suivre la commande", enterOrderNum: "Numéro de commande #", status: "Statut",
-        recentOrders: "Mes commandes récentes"
+        recentOrders: "Mes commandes récentes",
+    admin: "Admin", adminDashboard: "Tableau de bord Admin", adminPasswordPlaceholder: "Mot de passe (613)",
+    activeOrders: "Commandes Actives",
+    menuManager: "Gestion du Menu", addNewItem: "+ Ajouter un article",
+        statusOptions: ["Soumis","En cuisine","Prêt","Servi"],
+        imageUrlsLabel: "URLs des images (séparées par des virgules)", availableLabel: "Disponible",
+        deleteConfirm: "Supprimer l'article?",
+        passwordWrong: "Mot de passe incorrect",
+        menuManagerSave: "Enregistrer les modifications",
     }
+};
+
+// Category translations for UI (menu item categories)
+const categoryTranslations = {
+    "Salads": { en: "Salads", fr: "Salades" },
+    "Appetizers": { en: "Appetizers", fr: "Entrées" },
+    "Wings": { en: "Wings", fr: "Ailes" },
+    "Burgers": { en: "Burgers", fr: "Burgers" },
+    "Mains": { en: "Mains", fr: "Plats" },
+    "New": { en: "New", fr: "Nouveau" }
 };
 
 createApp({
@@ -512,10 +462,14 @@ createApp({
         const savedLang = localStorage.getItem('roda_lang');
         const browserLang = navigator.language.startsWith('fr') ? 'fr' : 'en';
         this.lang = savedLang || browserLang;
+        // Set document language for accessibility and search engines
+        try { document.documentElement.lang = this.lang; } catch(e) {}
 
         // 2. Load Data
         const storedMenu = localStorage.getItem('roda_menu');
         this.menu = storedMenu ? JSON.parse(storedMenu) : initialMenu;
+    // Ensure every item has at least two images (for carousel) and normalize paths
+    this.normalizeImages();
         
         this.allOrders = JSON.parse(localStorage.getItem('roda_orders') || '[]');
         this.myHistory = JSON.parse(localStorage.getItem('roda_history') || '[]');
@@ -527,6 +481,7 @@ createApp({
         setLang(l) {
             this.lang = l;
             localStorage.setItem('roda_lang', l);
+            try { document.documentElement.lang = l; } catch(e) {}
         },
         addToCart(item) {
             this.cart.push({
@@ -536,7 +491,7 @@ createApp({
                 note: this.customerNote
             });
             item.tempQty = 1;
-            alert(`${item.name[this.lang]} added!`);
+            alert(`${item.name[this.lang]} ${this.lang === 'fr' ? 'ajouté!' : 'added!'}`);
         },
         removeFromCart(index) {
             this.cart.splice(index, 1);
@@ -560,60 +515,18 @@ createApp({
             localStorage.setItem('roda_orders', JSON.stringify(this.allOrders));
             localStorage.setItem('roda_history', JSON.stringify(this.myHistory));
 
-// Prepare Email Data
-    if(this.customerEmail) {
-        // Build items list for email
-        const itemsList = this.cart.map(item => {
-            return `
-                <tr style="vertical-align: top; border-bottom: 1px solid #eee;">
-                    <td style="padding: 16px 8px 16px 4px; width: 80px;">
-                        <img style="width: 70px; height: 70px; object-fit: cover; border-radius: 8px; border: 2px solid #C4A052;" 
-                             src="${item.image}" alt="${item.name[this.lang]}" />
-                    </td>
-                    <td style="padding: 16px 8px; width: 100%;">
-                        <div style="font-weight: 600; color: #000; font-size: 15px;">${item.name.en}</div>
-                        <div style="font-size: 13px; color: #666; padding-top: 4px;">Quantity: ${item.qty}</div>
-                        ${item.note ? `<div style="font-size: 12px; color: #C4A052; padding-top: 4px; font-style: italic;">Note: ${item.note}</div>` : ''}
-                    </td>
-                    <td style="padding: 16px 8px 16px 0; white-space: nowrap; text-align: right; vertical-align: middle;">
-                        <strong style="font-size: 16px; color: #C4A052;">$${(item.price * item.qty).toFixed(2)}</strong>
-                    </td>
-                </tr>
-            `;
-        }).join('');
+            // Send Email (Mocked if ID invalid)
+            if(this.customerEmail) {
+                try { emailjs.send("service_xxxx", "template_xxxx", { order_id: orderId, to_email: this.customerEmail }); } catch(e){}
+            }
 
-        const totalItems = this.cart.reduce((acc, item) => acc + item.qty, 0);
-
-        const emailParams = {
-            to_email: this.customerEmail,
-            order_id: orderId,
-            total_items: totalItems,
-            order_total: this.cartTotal,
-            customer_note: this.customerNote || 'No special requests',
-            order_time: newOrder.time,
-            items_html: itemsList,
-            restaurant_name: "Roda Bar & Grill",
-            restaurant_address: "123 Main Street, Your City",
-            restaurant_phone: "(555) 123-4567"
-        };
-
-        try { 
-            emailjs.send("service_ob2vx0c", "template_ealmonf", emailParams)
-                .then(() => console.log("Receipt sent successfully"))
-                .catch(err => console.error("Email error:", err));
-        } catch(e) {
-            console.error("EmailJS error:", e);
-        }
-    }
-
-    alert(`Order #${orderId} submitted! ${this.customerEmail ? 'Check your email for confirmation.' : ''}`);
-    this.cart = [];
-    this.customerNote = '';
-    this.customerEmail = '';
-    this.currentPage = 'track';
-    this.trackId = orderId;
-    this.trackOrder();
-},
+            alert(this.lang === 'fr' ? `Commande #${orderId} soumise!` : `Order #${orderId} submitted!`);
+            this.cart = [];
+            this.customerNote = '';
+            this.currentPage = 'track';
+            this.trackId = orderId;
+            this.trackOrder();
+        },
         trackOrder() {
             const o = this.allOrders.find(x => x.id == this.trackId);
             this.trackStatus = o ? o.status : "Order not found";
@@ -622,7 +535,7 @@ createApp({
         // Admin Logic
         loginAdmin() {
             if(this.adminPass === '613') this.isAdmin = true;
-            else alert("Wrong password");
+            else alert(this.t.passwordWrong || "Wrong password");
         },
         saveOrders() {
             localStorage.setItem('roda_orders', JSON.stringify(this.allOrders));
@@ -643,14 +556,33 @@ createApp({
             });
         },
         deleteItem(index) {
-            if(confirm("Delete item?")) {
+            if(confirm(this.t.deleteConfirm || "Delete item?")) {
                 this.menu.splice(index, 1);
                 this.saveMenu();
             }
         },
         saveMenu() {
             localStorage.setItem('roda_menu', JSON.stringify(this.menu));
-            alert("Menu updated!");
+            alert(this.t.menuManagerSave || "Menu updated!");
+        }
+        ,
+        // Ensure items have at least two images (duplicate if only one)
+        normalizeImages() {
+            const logoPath = 'public/img/logo.png';
+            const placeholder = 'https://via.placeholder.com/600?text=Roda';
+            this.menu.forEach(it => {
+                if(!it.images || !it.images.length) {
+                    it.images = [logoPath, placeholder];
+                } else if(it.images.length === 1) {
+                    // duplicate the single image to have carousel behavior
+                    it.images.push(it.images[0]);
+                }
+                // ensure strings are trimmed
+                it.images = it.images.map(s => String(s).trim());
+            });
+        },
+        translateCategory(cat) {
+            return (categoryTranslations[cat] && categoryTranslations[cat][this.lang]) || cat;
         }
     }
 }).mount('#app');

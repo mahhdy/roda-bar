@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Roda Bar Logo Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+            padding: 40px;
+            background: #333;
+            font-family: Arial, sans-serif;
+        }
+        .logo-container {
+            text-align: center;
+        }
+        .size-label {
+            color: #fff;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        canvas {
+            border-radius: 50%;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        .download-btn {
+            margin-top: 10px;
+            padding: 8px 16px;
+            background: #C4A052;
+            color: #000;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .download-btn:hover {
+            background: #D4AF37;
+        }
+        h1 {
+            color: #C4A052;
+            font-family: 'Great Vibes', cursive;
+        }
+    </style>
+</head>
+<body>
+    <h1>Roda Bar Logo Generator</h1>
+    
+    <div class="logo-container">
+        <div class="size-label">512 x 512 (High Res)</div>
+        <canvas id="logo512" width="512" height="512"></canvas>
+        <br><button class="download-btn" onclick="download('logo512', 'roda-logo-512.png')">Download 512px</button>
+    </div>
+    
+    <div class="logo-container">
+        <div class="size-label">192 x 192 (PWA Icon)</div>
+        <canvas id="logo192" width="192" height="192"></canvas>
+        <br><button class="download-btn" onclick="download('logo192', 'roda-logo-192.png')">Download 192px</button>
+    </div>
+    
+    <div class="logo-container">
+        <div class="size-label">180 x 180 (Apple Touch)</div>
+        <canvas id="logo180" width="180" height="180"></canvas>
+        <br><button class="download-btn" onclick="download('logo180', 'roda-logo-180.png')">Download 180px</button>
+    </div>
+    
+    <div class="logo-container">
+        <div class="size-label">96 x 96 (Large Favicon)</div>
+        <canvas id="logo96" width="96" height="96"></canvas>
+        <br><button class="download-btn" onclick="download('logo96', 'roda-logo-96.png')">Download 96px</button>
+    </div>
+    
+    <div class="logo-container">
+        <div class="size-label">64 x 64 (Medium Icon)</div>
+        <canvas id="logo64" width="64" height="64"></canvas>
+        <br><button class="download-btn" onclick="download('logo64', 'roda-logo-64.png')">Download 64px</button>
+    </div>
+    
+    <div class="logo-container">
+        <div class="size-label">32 x 32 (Favicon)</div>
+        <canvas id="logo32" width="32" height="32"></canvas>
+        <br><button class="download-btn" onclick="download('logo32', 'roda-logo-32.png')">Download 32px</button>
+    </div>
+    
+    <div class="logo-container">
+        <div class="size-label">16 x 16 (Tiny Favicon)</div>
+        <canvas id="logo16" width="16" height="16"></canvas>
+        <br><button class="download-btn" onclick="download('logo16', 'roda-logo-16.png')">Download 16px</button>
+    </div>
+
+    <script>
+        const goldColor = '#C4A052';
+        const blackColor = '#000000';
+
+        function drawLogo(canvasId) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            const size = canvas.width;
+            const center = size / 2;
+            const radius = size * 0.48;
+
+            // Clear canvas
+            ctx.clearRect(0, 0, size, size);
+
+            // Draw black circle background
+            ctx.beginPath();
+            ctx.arc(center, center, radius, 0, Math.PI * 2);
+            ctx.fillStyle = blackColor;
+            ctx.fill();
+
+            // Draw gold arc (left side partial circle)
+            ctx.beginPath();
+            ctx.arc(center, center, radius * 0.75, Math.PI * 0.75, Math.PI * 1.25, false);
+            ctx.strokeStyle = goldColor;
+            ctx.lineWidth = size * 0.012;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+
+            // Draw "Roda" text
+            if (size >= 64) {
+                ctx.font = `${size * 0.25}px 'Great Vibes', 'Brush Script MT', cursive`;
+                ctx.fillStyle = goldColor;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('Roda', center, center - size * 0.02);
+
+                // Draw "bar" text
+                ctx.font = `${size * 0.14}px 'Great Vibes', 'Brush Script MT', cursive`;
+                ctx.fillText('bar', center + size * 0.12, center + size * 0.18);
+            } else {
+                // For small sizes, just show "R"
+                ctx.font = `bold ${size * 0.45}px Arial, sans-serif`;
+                ctx.fillStyle = goldColor;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('R', center, center + size * 0.05);
+            }
+        }
+
+        function download(canvasId, filename) {
+            const canvas = document.getElementById(canvasId);
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        // Wait for font to load, then draw all logos
+        document.fonts.ready.then(() => {
+            drawLogo('logo512');
+            drawLogo('logo192');
+            drawLogo('logo180');
+            drawLogo('logo96');
+            drawLogo('logo64');
+            drawLogo('logo32');
+            drawLogo('logo16');
+        });
+    </script>
+</body>
+</html>

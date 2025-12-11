@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roda Bar Menu</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+    <!-- EmailJS -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <style>
+        body { background-color: #111; color: #fff; font-family: 'Segoe UI', sans-serif; }
+        
+        /* Navbar */
+        .navbar { background-color: #000; z-index: 1050; border-bottom: 1px solid #333; }
+        .navbar-brand { color: #d4af37 !important; font-family: 'Great Vibes', cursive; font-size: 2rem; }
+        .nav-link { color: #d4af37 !important; transition: 0.3s; }
+        .nav-link:hover { color: #fff !important; }
+
+        /* General UI */
+        h1, h2, h3, h4, h5 { color: #d4af37; }
+        .page-section { display: none; margin-top: 100px; padding-bottom: 50px; } 
+        
+        /* Item Cards */
+        .item-card { background:#1a1a1a; border:2px solid #d4af37; border-radius:12px; overflow:hidden; box-shadow:0 8px 20px rgba(212,175,55,0.2); height: 100%; display: flex; flex-direction: column;}
+        .carousel-inner img { height:260px; object-fit:cover; }
+        .btn-gold { background:#d4af37; color:#000; font-weight:bold; border: none; }
+        .btn-gold:hover { background:#b8962e; color: #000; }
+        .btn-gold:disabled { background: #444; color: #888; border: 1px solid #555; }
+        
+        /* Categories */
+        .segmented-control { display: flex; background: #000; border: 2px solid #d4af37; border-radius: 50px; padding: 6px; margin: 20px auto; width: fit-content; overflow-x: auto; white-space: nowrap; }
+        .segmented-control button { background: transparent; color: #d4af37; border: none; padding: 10px 20px; border-radius: 50px; font-weight: 600; transition: all 0.3s; }
+        .segmented-control button.active { background: #d4af37; color: #000; }
+        
+        /* Inputs & Admin Specifics */
+        .quantity-input { width: 70px; display: inline-block; background: #333; color: #fff; border: 1px solid #d4af37; }
+        .quantity-input:disabled { background: #222; border-color: #444; color: #555; }
+        
+        .order-confirmation { background: #1a1a1a; border: 2px solid #d4af37; border-radius: 15px; padding: 30px; text-align: center; margin: 30px 0; }
+        
+        /* Admin Styling Fixes */
+        .admin-card { background: #222; border: 1px solid #555; padding: 20px; margin-bottom: 20px; border-radius: 8px; }
+        
+        /* Labels in Admin */
+        .admin-label { color: #d4af37; font-size: 0.85rem; margin-bottom: 4px; display: block; }
+        
+        /* Admin Inputs - High Visibility */
+        .admin-input { background: #000 !important; border: 1px solid #444; color: #fff !important; margin-bottom: 5px; }
+        .admin-input:focus { border-color: #d4af37; box-shadow: 0 0 5px rgba(212,175,55,0.5); }
+        
+        /* Admin Tabs */
+        .nav-tabs { border-bottom: 1px solid #444; }
+        .nav-tabs .nav-link { color: #d4af37; background: #222; border: 1px solid #444; margin-right: 4px; }
+        .nav-tabs .nav-link:hover { background: #333; color: #fff; }
+        .nav-tabs .nav-link.active { background-color: #d4af37 !important; color: #000 !important; border-color: #d4af37; font-weight: bold; }
+        
+        .history-item { cursor: pointer; transition: 0.2s; border: 1px solid #444; }
+        .history-item:hover { background-color: #333; border-color: #d4af37; }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="#">Roda Bar</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="#menu" onclick="showPage('menu')">Menu</a></li>
+                <li class="nav-item"><a class="nav-link" href="#cart" onclick="showPage('cart')">Cart (<span id="cart-count">0</span>)</a></li>
+                <li class="nav-item"><a class="nav-link" href="#track" onclick="showPage('track')">Track</a></li>
+                <li class="nav-item"><a class="nav-link" href="#admin" onclick="showPage('admin')">Admin</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- MENU PAGE -->
+<div class="container page-section" id="menu-page" style="display: block;"></div>
+
+<!-- CART PAGE -->
+<div class="container page-section" id="cart-page">
+    <h2 class="text-center mb-4">Your Order</h2>
+    <ul id="cart-items" class="list-group mb-4"></ul>
+    <div id="cart-controls">
+        <h4>Total: $<span id="cart-total">0.00</span></h4>
+        <div class="mt-4">
+            <input type="email" id="customer-email" class="form-control mb-3" placeholder="Your email (optional – for receipt)">
+            <button class="btn btn-gold w-100 btn-lg" id="submit-order">Submit Order</button>
+        </div>
+    </div>
+    <div id="order-confirmation" class="order-confirmation" style="display:none;">
+        <h3>Order Submitted!</h3>
+        <p class="display-4 text-gold">Order #<span id="final-order-id"></span></p>
+        <p>We'll prepare your food shortly.</p>
+        <button class="btn btn-outline-light mt-3" onclick="showPage('menu')">← Return to Menu</button>
+        <button class="btn btn-gold mt-3 ms-2" onclick="showPage('track')">Track Order →</button>
+    </div>
+</div>
+
+<!-- TRACK PAGE -->
+<div class="container page-section" id="track-page">
+    <h2>Track Order</h2>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="input-group mb-3">
+                <input type="text" id="order-number" placeholder="Enter Order #" class="form-control">
+                <button class="btn btn-gold" id="track-btn">Track</button>
+            </div>
+            <p id="order-status" class="mt-3 fs-4 text-gold"></p>
+        </div>
+        <div class="col-md-6">
+            <div class="card bg-dark border-secondary">
+                <div class="card-header border-secondary text-gold">My Recent Orders</div>
+                <ul class="list-group list-group-flush" id="my-history-list">
+                    <li class="list-group-item bg-dark text-muted">No recent orders.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ADMIN PAGE -->
+<div class="container page-section" id="admin-page">
+    <h2>Admin Panel</h2>
+    
+    <!-- Login -->
+    <div id="login-screen">
+        <input type="password" id="admin-pass" placeholder="Password" class="form-control mb-3" style="max-width: 300px;">
+        <button class="btn btn-gold" id="admin-login">Login</button>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="admin-content" style="display:none;">
+        
+        <!-- Admin Tabs -->
+        <ul class="nav nav-tabs mb-4" id="adminTab" role="tablist">
+            <li class="nav-item">
+                <button class="nav-link active" id="orders-tab" data-bs-toggle="tab" data-bs-target="#orders-pane" type="button">Active Orders</button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" id="menu-mgmt-tab" data-bs-toggle="tab" data-bs-target="#menu-mgmt-pane" type="button">Edit Menu</button>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <!-- Orders Tab -->
+            <div class="tab-pane fade show active" id="orders-pane">
+                <div id="admin-orders-list"></div>
+            </div>
+
+            <!-- Menu Management Tab -->
+            <div class="tab-pane fade" id="menu-mgmt-pane">
+                
+                <!-- Add New Item -->
+                <div class="admin-card border-gold mb-4">
+                    <h4 class="mb-3 text-gold">Add New Item</h4>
+                    <div class="row g-2">
+                        <div class="col-md-3">
+                            <label class="admin-label">Name</label>
+                            <input type="text" id="new-name" class="form-control admin-input" placeholder="e.g. Caesar Salad">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="admin-label">Category</label>
+                            <input type="text" id="new-cat" class="form-control admin-input" placeholder="e.g. Salads">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="admin-label">Price</label>
+                            <input type="number" id="new-price" class="form-control admin-input" placeholder="0.00">
+                        </div>
+                         <div class="col-md-4">
+                            <label class="admin-label">Status</label>
+                            <select id="new-avail" class="form-control admin-input">
+                                <option value="true">Available</option>
+                                <option value="false">Sold Out</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="admin-label">Description / Ingredients</label>
+                            <textarea id="new-desc" class="form-control admin-input" rows="2" placeholder="Ingredients list..."></textarea>
+                        </div>
+                        <div class="col-12">
+                            <label class="admin-label">Image URLs (One per line)</label>
+                            <textarea id="new-img" class="form-control admin-input" rows="2" placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg"></textarea>
+                        </div>
+                    </div>
+                    <button class="btn btn-gold mt-3" onclick="addNewItem()">+ Add Item</button>
+                </div>
+
+                <!-- Existing Items List -->
+                <div id="admin-menu-list"></div>
+            </div>
+        </div>
+
+        <button class="btn btn-secondary mt-3" onclick="location.reload()">Refresh / Logout</button>
+    </div>
+</div>
+
+<script>
+    // --- 1. DATA INITIALIZATION ---
+    // Expanded Menu Data
+    const fullMenuData = [
+        // --- Salads ---
+        {"name": "Caesar Salad", "category": "Salads", "price": 14.99, "available": true, "description": "Crisp romaine hearts, hand‑torn and tossed in 45g light yogurt‑based Caesar dressing, finished with 10g shaved parmesan, 20g baked whole‑grain croutons, and fresh lemon.", "images": ["https://images.unsplash.com/photo-1550304943-4f24f54ddde9?q=80&w=600", "https://images.unsplash.com/photo-1546793665-c74683f339c1?q=80&w=600"]},
+        {"name": "Garden Salad", "category": "Salads", "price": 12.99, "available": true, "description": "120g mix of romaine, baby spinach, and arugula with 60g cucumber, cherry tomato, and carrot, served with 30ml extra‑virgin olive‑oil and lemon vinaigrette.", "images": ["https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=600"]},
+        {"name": "Chicken Caesar Salad", "category": "Salads", "price": 17.99, "available": true, "description": "120g grilled skinless chicken breast over romaine hearts with 40g light yogurt Caesar, 10g shaved parmesan, and 20g whole‑grain croutons.", "images": ["https://images.unsplash.com/photo-1580013759032-c96505e24c1f?q=80&w=600"]},
+        {"name": "Baby Spinach Salad", "category": "Salads", "price": 13.99, "available": true, "description": "120g fresh baby spinach leaves with 30g cherry tomatoes, 20g red onion, 10g toasted almonds, and 30ml light balsamic vinaigrette.", "images": ["https://images.unsplash.com/photo-1576021182211-9ea8dced3690?q=80&w=600"]},
+        {"name": "Coleslaw", "category": "Salads", "price": 8.99, "available": true, "description": "80g shredded green and red cabbage with 20g carrot, lightly dressed in 25g yogurt‑mustard slaw dressing sweetened with a touch of honey.", "images": ["https://images.unsplash.com/photo-1623227413729-16c4f034df48?q=80&w=600"]},
+        {"name": "Chicken Salad", "category": "Salads", "price": 15.99, "available": true, "description": "120g diced grilled chicken breast folded with 30g Greek yogurt, celery, herbs, and lemon, served on a bed of crisp mixed greens.", "images": ["https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?q=80&w=600"]},
+
+        // --- Appetizers ---
+        {"name": "Soup (Daily)", "category": "Appetizers", "price": 8.99, "available": true, "description": "300ml chef’s small‑batch soup based on clear vegetable stock with seasonal vegetables and lean protein, finished with fresh herbs and no added cream.", "images": ["https://images.unsplash.com/photo-1547592166-23ac45744acd?q=80&w=600"]},
+        {"name": "Garlic Bread", "category": "Appetizers", "price": 6.99, "available": true, "description": "Two slices (60g) warm whole‑grain baguette brushed with 8ml extra‑virgin olive oil, fresh garlic, and parsley, baked until crisp.", "images": ["https://images.unsplash.com/photo-1619535860434-caf11ffaa25e?q=80&w=600"]},
+        {"name": "Cheese Bread", "category": "Appetizers", "price": 8.99, "available": true, "description": "Two slices (60g) whole‑grain baguette topped with 20g part‑skim mozzarella and herbs, oven‑baked for a light, melty finish.", "images": ["https://images.unsplash.com/photo-1565958011703-44f9829ba187?q=80&w=600"]},
+        {"name": "Nachos – Beef", "category": "Appetizers", "price": 14.99, "available": true, "description": "80g baked corn tortilla chips topped with 70g extra‑lean seasoned ground beef, 40g black beans, 25g reduced‑fat cheese, pico de gallo, and fresh jalapeños.", "images": ["https://images.unsplash.com/photo-1582169296194-e9d648411dff?q=80&w=600"]},
+        {"name": "Nachos – Chicken", "category": "Appetizers", "price": 14.99, "available": true, "description": "80g baked corn tortilla chips with 80g grilled chicken strips, 40g black beans, 25g reduced‑fat cheese, pico de gallo, and 30g guacamole.", "images": ["https://images.unsplash.com/photo-1513456852971-30c0b8199d4d?q=80&w=600"]},
+        {"name": "Poutine", "category": "Appetizers", "price": 10.99, "available": true, "description": "160g oven‑roasted potato wedges with 35g reduced‑fat cheese curds and 60ml light house gravy made from vegetable stock.", "images": ["https://www.seasonsandsuppers.ca/wp-content/uploads/2014/01/new-poutine-1.jpg"]},
+        {"name": "Calamari", "category": "Appetizers", "price": 15.99, "available": true, "description": "120g fresh calamari rings marinated in lemon and herbs, lightly dusted and oven‑baked, served with 30ml roasted‑pepper yogurt dip.", "images": ["https://images.unsplash.com/photo-1604909052743-94e838986d24?q=80&w=600"]},
+        {"name": "Shrimp Cocktail", "category": "Appetizers", "price": 16.99, "available": true, "description": "120g chilled poached shrimp served with 40ml house tomato‑horseradish cocktail sauce and fresh lemon.", "images": ["https://images.unsplash.com/photo-1625943555919-4d7494a4eb26?q=80&w=600"]},
+
+        // --- Wings ---
+        {"name": "BBQ Wings", "category": "Wings", "price": 14.99, "available": true, "description": "6 oven‑baked chicken wings (180g) tossed in 25g house smoky BBQ sauce made with tomato, spices, and reduced sugar.", "images": ["https://images.unsplash.com/photo-1520072959219-c595dc3f3a2a?q=80&w=600"]},
+        {"name": "Fried Wings (Light)", "category": "Wings", "price": 14.99, "available": true, "description": "6 wings (180g) lightly coated and flash‑fried, then drained and finished in the oven with a dry spice rub.", "images": ["https://images.unsplash.com/photo-1569691830917-2232d3082527?q=80&w=600"]},
+        {"name": "Tandoori Wings", "category": "Wings", "price": 15.99, "available": true, "description": "6 wings marinated overnight in low‑fat yogurt, tandoori spices, garlic, and lemon juice, then baked for a smoky finish.", "images": ["https://images.unsplash.com/photo-1606755456889-6e344d5d9c24?q=80&w=600"]},
+
+        // --- Sandwiches / Burgers ---
+        {"name": "Classic Burger", "category": "Burgers", "price": 15.99, "available": true, "description": "150g extra‑lean ground Angus beef patty grilled over open flame, served on a toasted whole‑grain bun with lettuce, tomato, red onion, pickles.", "images": ["https://searafoodsme.com/wp-content/uploads/2022/04/Beef-Burger1080x720px.jpg"]},
+        {"name": "Roda Burger", "category": "Burgers", "price": 17.99, "available": true, "description": "Signature 170g lean Angus beef patty with house herb seasoning, multigrain bun, mixed greens, tomato, grilled onion, and 15ml light yogurt‑mustard sauce.", "images": ["https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=600"]},
+        {"name": "Mushroom Burger", "category": "Burgers", "price": 16.99, "available": true, "description": "Grilled 90g Portobello mushroom cap layered with 90g lean beef or 100g veggie patty, Swiss‑style reduced‑fat cheese, arugula, and tomato.", "images": ["https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?q=80&w=600"]},
+        {"name": "Chicken Wrap", "category": "Burgers", "price": 13.99, "available": true, "description": "100g grilled chicken strips, 60g mixed greens, tomato, cucumber, and shredded carrot in a warm whole‑wheat tortilla with 20ml light yogurt dressing.", "images": ["https://images.unsplash.com/photo-1626700051175-6818013e1d4f?q=80&w=600"]},
+
+        // --- Main Course ---
+        {"name": "Salmon (Fajitas)", "category": "Mains", "price": 24.99, "available": true, "description": "150g fresh Atlantic salmon, grilled with lime and spices, served sizzling with 80g bell peppers, 60g onion, warm whole‑wheat tortillas, and pico de gallo.", "images": ["https://images.unsplash.com/photo-1467003909585-2f8a7270028d?q=80&w=600"]},
+        {"name": "Steak Fajita", "category": "Mains", "price": 26.99, "available": true, "description": "150g sliced lean flank steak seared and tossed with 80g peppers and 60g onions, served with whole‑wheat tortillas, salsa, and fresh cilantro.", "images": ["https://images.unsplash.com/photo-1534939561126-855b8675edd7?q=80&w=600"]},
+        {"name": "Fish & Chips", "category": "Mains", "price": 18.99, "available": true, "description": "160g cod fillet lightly crumbed and oven‑baked, served with 160g oven fries, lemon, and a 30g side of light yogurt‑dill tartar sauce.", "images": ["https://images.unsplash.com/photo-1579208575657-c5296846081d?q=80&w=600"]},
+        {"name": "Pasta Alfredo", "category": "Mains", "price": 16.99, "available": true, "description": "80g whole‑wheat fettuccine in a light Alfredo sauce made with skim milk, parmesan, and puréed cauliflower, finished with parsley and 60g steamed broccoli.", "images": ["https://images.unsplash.com/photo-1645112411341-6c4fd023714a?q=80&w=600"]},
+        {"name": "Shepherd’s Pie", "category": "Mains", "price": 19.99, "available": true, "description": "120g lean ground beef and turkey simmered with 80g peas, carrots, and corn in light gravy, topped with 140g olive‑oil mashed potatoes.", "images": ["https://images.unsplash.com/photo-1664992987820-80a5a3a79d39?q=80&w=600"]},
+
+        // --- VIP / Specials (Retained) ---
+        {"name": "Filet Mignon", "category": "VIP", "price": 34.99, "available": true, "description": "Tender steak grilled to perfection with rosemary.", "images": ["https://natashaskitchen.com/wp-content/uploads/2020/03/Pan-Seared-Steak-4.jpg"]},
+        {"name": "Greek Salad", "category": "Specials", "price": 12.99, "available": true, "description": "Classic Greek salad with feta and olives.", "images": ["https://www.foodnetwork.com/content/dam/images/food/fullset/2016/7/20/3/FNK_The-Best-Greek-Salad_s4x3.jpg"]}
+    ];
+
+    try { emailjs.init("FG_Aw6_G8kUJiDRqJ"); } catch(e) {}
+
+    // Init Logic
+    let storedMenu = localStorage.getItem('menu');
+    // Force update if default data seems small/old, or load from storage
+    let menu = (storedMenu && JSON.parse(storedMenu).length > 10) ? JSON.parse(storedMenu) : fullMenuData;
+    // Always save current full data to ensure new user gets it
+    if(!storedMenu || JSON.parse(storedMenu).length < 10) localStorage.setItem('menu', JSON.stringify(fullMenuData));
+
+    let orders = JSON.parse(localStorage.getItem('orders') || '[]');
+    let myHistory = JSON.parse(localStorage.getItem('my_order_history') || '[]');
+    let cart = [];
+    let orderNumber = orders.length ? Math.max(...orders.map(o=>o.id)) + 1 : 1;
+    const adminHash = 613;
+
+    // --- 2. NAVIGATION ---
+    window.showPage = function(pageName) {
+        document.querySelectorAll('.page-section').forEach(el => el.style.display = 'none');
+        document.getElementById(pageName + '-page').style.display = 'block';
+        const navBar = document.getElementById('navbarNav');
+        if(navBar.classList.contains('show')) new bootstrap.Collapse(navBar).toggle();
+        
+        if(pageName === 'menu') renderMenu();
+        if(pageName === 'track') renderHistory();
+        if(pageName === 'admin' && document.getElementById('admin-content').style.display==='block') {
+            renderAdminOrders();
+            renderAdminMenuEditor();
+        }
+    }
+
+    // --- 3. MENU RENDERING ---
+    function renderMenu() {
+        const categories = {};
+        menu.forEach(item => { 
+            categories[item.category] = categories[item.category] || []; 
+            categories[item.category].push(item); 
+        });
+        const keys = Object.keys(categories);
+        
+        let html = '<h1 class="text-center my-4">Our Menu</h1>';
+        html += '<div class="segmented-control">';
+        keys.forEach((cat, i) => html += `<button class="seg-btn ${i===0?'active':''}" data-cat="${cat}">${cat}</button>`);
+        html += '</div><div class="row" id="items-row"></div>';
+        
+        document.getElementById('menu-page').innerHTML = html;
+        if(keys.length > 0) renderCategoryItems(categories[keys[0]]);
+
+        document.querySelectorAll('.seg-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));
+                btn.classList.add('active');
+                renderCategoryItems(categories[btn.dataset.cat]);
+            });
+        });
+    }
+
+    function renderCategoryItems(items) {
+        const row = document.getElementById('items-row');
+        row.innerHTML = '';
+        items.forEach(item => {
+            const safeId = item.name.replace(/[^a-zA-Z0-9]/g, '_');
+            
+            // Carousel Logic
+            let carouselHtml = '';
+            if(item.images && item.images.length > 0) {
+                const slides = item.images.map((img, i) => `<div class="carousel-item ${i===0?'active':''}"><img src="${img}" class="d-block w-100" alt="${item.name}"></div>`).join('');
+                const controls = item.images.length > 1 ? `
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carousel_${safeId}" data-bs-slide="prev"><span class="carousel-control-prev-icon"></span></button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carousel_${safeId}" data-bs-slide="next"><span class="carousel-control-next-icon"></span></button>` : '';
+                
+                carouselHtml = `<div id="carousel_${safeId}" class="carousel slide" data-bs-ride="false"><div class="carousel-inner">${slides}</div>${controls}</div>`;
+            } else {
+                carouselHtml = `<img src="https://via.placeholder.com/600x400?text=No+Image" class="d-block w-100" style="height:260px; object-fit:cover;">`;
+            }
+
+            const isSoldOut = !item.available;
+            const btnState = isSoldOut ? 'disabled' : '';
+            const btnText = isSoldOut ? 'Sold Out' : 'Add to Cart';
+            const btnClass = isSoldOut ? 'btn-secondary' : 'btn-gold';
+            const noteHtml = isSoldOut ? '<div class="text-danger mt-1 small fw-bold">Sold out for today</div>' : '';
+            
+            const div = document.createElement('div');
+            div.className = 'col-md-6 col-lg-4 mb-4';
+            div.innerHTML = `
+                <div class="item-card">
+                    ${carouselHtml}
+                    <div class="p-3 d-flex flex-column flex-grow-1">
+                        <h5>${item.name}</h5>
+                        <p class="small text-light flex-grow-1">${item.description}</p>
+                        <div class="mt-auto">
+                            <p class="fw-bold text-gold">$${parseFloat(item.price).toFixed(2)}</p>
+                            <div class="d-flex gap-2 mb-2">
+                                <input type="number" min="1" max="10" value="1" class="form-control quantity-input" ${btnState}>
+                                <button class="btn ${btnClass} w-100 add-to-cart" data-name="${item.name}" ${btnState}>${btnText}</button>
+                            </div>
+                            ${noteHtml}
+                        </div>
+                    </div>
+                </div>`;
+            row.appendChild(div);
+        });
+    }
+
+    // --- 4. CART & ORDER LOGIC ---
+    document.addEventListener('click', e => {
+        if (e.target.classList.contains('add-to-cart')) {
+            const item = menu.find(i => i.name === e.target.dataset.name);
+            const card = e.target.closest('.item-card');
+            const qty = parseInt(card.querySelector('.quantity-input').value) || 1;
+            const note = prompt(`Special request for ${item.name}?`, '') || '';
+            cart.push({ ...item, qty, note });
+            document.getElementById('cart-count').textContent = cart.reduce((s,i)=>s+i.qty,0);
+            e.target.textContent = "Added!";
+            setTimeout(() => e.target.textContent = "Add to Cart", 1000);
+            updateCartDisplay();
+        }
+    });
+
+    function updateCartDisplay() {
+        const list = document.getElementById('cart-items');
+        list.innerHTML = '';
+        let total = 0;
+        if (cart.length === 0) list.innerHTML = '<li class="list-group-item bg-dark text-white text-center">Your cart is empty</li>';
+        cart.forEach((c,i) => {
+            total += c.price * c.qty;
+            list.innerHTML += `<li class="list-group-item bg-dark text-white border-secondary d-flex justify-content-between align-items-center">
+                <div><strong>${c.qty}× ${c.name}</strong>${c.note ? `<br><span class="text-warning small">Note: ${c.note}</span>` : ''}</div>
+                <div class="text-end"><div>$${(c.price*c.qty).toFixed(2)}</div><button class="btn btn-sm btn-outline-danger mt-1" onclick="removeFromCart(${i})">Remove</button></div></li>`;
+        });
+        document.getElementById('cart-total').textContent = total.toFixed(2);
+    }
+
+    window.removeFromCart = function(i) {
+        cart.splice(i, 1);
+        document.getElementById('cart-count').textContent = cart.reduce((s,i)=>s+i.qty,0);
+        updateCartDisplay();
+    }
+
+    document.getElementById('submit-order').addEventListener('click', () => {
+        if (cart.length === 0) return alert('Cart is empty');
+        const email = document.getElementById('customer-email').value.trim();
+        const order = { id: orderNumber++, items: [...cart], status: 'Submitted', email: email, total: document.getElementById('cart-total').textContent, time: new Date().toLocaleString() };
+        orders.push(order);
+        localStorage.setItem('orders', JSON.stringify(orders));
+        myHistory.push(order.id);
+        localStorage.setItem('my_order_history', JSON.stringify(myHistory));
+        document.getElementById('final-order-id').textContent = order.id;
+        document.getElementById('cart-controls').style.display = 'none';
+        document.getElementById('order-confirmation').style.display = 'block';
+        cart = [];
+        document.getElementById('cart-count').textContent = '0';
+        updateCartDisplay();
+        if(email) { try { emailjs.send("service_xxxx", "template_xxxx", { order_id: order.id, to_email: email }); } catch(e){} }
+    });
+
+    // --- 5. TRACKING ---
+    function renderHistory() {
+        const list = document.getElementById('my-history-list');
+        list.innerHTML = '';
+        if(myHistory.length === 0) return list.innerHTML = '<li class="list-group-item bg-dark text-muted">No previous orders.</li>';
+        [...myHistory].reverse().slice(0, 5).forEach(id => {
+            const o = orders.find(x => x.id === id);
+            if(o) list.innerHTML += `<li class="list-group-item bg-dark text-white history-item" onclick="checkStatus(${id})">Order #${id} - <span class="text-gold">${o.status}</span></li>`;
+        });
+    }
+    window.checkStatus = (id) => {
+        document.getElementById('order-number').value = id;
+        document.getElementById('track-btn').click();
+    }
+    document.getElementById('track-btn').addEventListener('click', () => {
+        const id = parseInt(document.getElementById('order-number').value);
+        const order = orders.find(o => o.id === id);
+        const el = document.getElementById('order-status');
+        el.textContent = order ? `Order #${id}: ${order.status}` : "Order not found.";
+        el.className = order ? "mt-3 fs-4 text-gold" : "mt-3 fs-4 text-danger";
+    });
+
+    // --- 6. ADMIN PANEL LOGIC ---
+    document.getElementById('admin-login').addEventListener('click', () => {
+        if(hash(document.getElementById('admin-pass').value) === adminHash) {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('admin-content').style.display = 'block';
+            renderAdminOrders();
+            renderAdminMenuEditor();
+        } else alert('Incorrect Password');
+    });
+
+    function renderAdminOrders() {
+        const list = document.getElementById('admin-orders-list');
+        list.innerHTML = '';
+        [...orders].reverse().forEach(o => {
+            const itemsStr = o.items.map(i => `${i.qty}x ${i.name} ${i.note ? `(${i.note})` : ''}`).join(', ');
+            list.innerHTML += `<div class="admin-card">
+                <h5>#${o.id} - $${o.total} <small>(${o.status})</small></h5>
+                <p class="small text-muted">${itemsStr}</p>
+                <select class="form-select form-select-sm w-auto" onchange="updateStatus(${o.id}, this.value)">
+                    ${['Submitted','Cooking','Ready','Served'].map(s => `<option value="${s}" ${o.status===s?'selected':''}>${s}</option>`).join('')}
+                </select>
+            </div>`;
+        });
+    }
+    window.updateStatus = (id, val) => {
+        const o = orders.find(x => x.id === id);
+        if(o) { o.status = val; localStorage.setItem('orders', JSON.stringify(orders)); }
+    }
+
+    // --- MENU EDITOR LOGIC ---
+    function renderAdminMenuEditor() {
+        const list = document.getElementById('admin-menu-list');
+        list.innerHTML = '';
+        
+        menu.forEach((item, index) => {
+            // Join images with newline for textarea
+            const imgText = (item.images || []).join('\n');
+            const isAvail = item.available;
+            
+            list.innerHTML += `
+            <div class="admin-card">
+                <div class="row g-2 align-items-end">
+                    <div class="col-md-3">
+                        <label class="admin-label">Name</label>
+                        <input type="text" class="form-control admin-input" value="${item.name}" onchange="updateMenuItem(${index}, 'name', this.value)">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="admin-label">Category</label>
+                        <input type="text" class="form-control admin-input" value="${item.category}" onchange="updateMenuItem(${index}, 'category', this.value)">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="admin-label">Price</label>
+                        <input type="number" class="form-control admin-input" value="${item.price}" onchange="updateMenuItem(${index}, 'price', this.value)">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="admin-label">Status</label>
+                        <select class="form-control admin-input" onchange="updateMenuItem(${index}, 'available', this.value)">
+                            <option value="true" ${isAvail ? 'selected' : ''}>Available</option>
+                            <option value="false" ${!isAvail ? 'selected' : ''}>Sold Out</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-outline-danger btn-sm w-100" onclick="deleteMenuItem(${index})">Delete</button>
+                    </div>
+                    <div class="col-12 mt-2">
+                        <label class="admin-label">Description / Ingredients</label>
+                        <textarea class="form-control admin-input" onchange="updateMenuItem(${index}, 'description', this.value)">${item.description}</textarea>
+                    </div>
+                    <div class="col-12 mt-2">
+                        <label class="admin-label">Images (One URL per line)</label>
+                        <textarea class="form-control admin-input" rows="2" onchange="updateMenuItem(${index}, 'images', this.value)">${imgText}</textarea>
+                    </div>
+                </div>
+            </div>`;
+        });
+    }
+
+    window.updateMenuItem = function(index, field, value) {
+        if(field === 'price') value = parseFloat(value);
+        if(field === 'available') value = (value === 'true');
+        if(field === 'images') {
+            // Split by newline or comma, trim whitespace, remove empty
+            value = value.split(/[\n,]+/).map(s => s.trim()).filter(s => s.length > 0);
+        }
+        menu[index][field] = value;
+        localStorage.setItem('menu', JSON.stringify(menu));
+    };
+
+    window.addNewItem = function() {
+        const name = document.getElementById('new-name').value;
+        const cat = document.getElementById('new-cat').value;
+        const price = parseFloat(document.getElementById('new-price').value);
+        const desc = document.getElementById('new-desc').value;
+        const avail = document.getElementById('new-avail').value === 'true';
+        const imgRaw = document.getElementById('new-img').value;
+        
+        // Process images
+        const images = imgRaw.split(/[\n,]+/).map(s => s.trim()).filter(s => s.length > 0);
+
+        if(name && price) {
+            menu.push({ name, category: cat || 'Specials', price, description: desc, available: avail, images: images });
+            localStorage.setItem('menu', JSON.stringify(menu));
+            renderAdminMenuEditor();
+            // Clear inputs
+            document.getElementById('new-name').value = '';
+            document.getElementById('new-price').value = '';
+            document.getElementById('new-img').value = '';
+            document.getElementById('new-desc').value = '';
+            alert('Item added!');
+        } else {
+            alert('Name and Price are required');
+        }
+    };
+
+    window.deleteMenuItem = function(index) {
+        if(confirm('Delete this item?')) {
+            menu.splice(index, 1);
+            localStorage.setItem('menu', JSON.stringify(menu));
+            renderAdminMenuEditor();
+        }
+    };
+
+    function hash(str) { let v=0; for(let i=0;i<str.length;i++) v+=str.charCodeAt(i); return v; }
+
+    // Initial Load
+    renderMenu();
+</script>
+</body>
+</html>
