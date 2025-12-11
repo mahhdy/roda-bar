@@ -1,0 +1,15 @@
+body {
+  margin: 0;
+  background: #000000;
+  color: #D4AF37;
+  font-family: sans-serif;
+}
+.logo { height: 70px; }
+nav a { color: #D4AF37; margin: 0 10px; }
+.btn {
+  background: #D4AF37;
+  color: black;
+  padding: 10px;
+  border-radius: 6px;
+  text-decoration: none;
+}

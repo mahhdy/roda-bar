@@ -1,0 +1,16 @@
+<% layout('layout') %>
+<h2>Cart</h2>
+
+<ul>
+  <% cart.forEach(c => { %>
+    <li><%= c.name %> — $<%= c.price %></li>
+  <% }) %>
+</ul>
+
+<form method="POST" action="/order/checkout">
+  <select name="payment">
+    <option value="online">Online</option>
+    <option value="inperson">Pay at table</option>
+  </select>
+  <button class="btn">Checkout</button>
+</form>

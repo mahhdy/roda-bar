@@ -1,0 +1,8 @@
+<h2>Admin Dashboard</h2>
+
+<h3>Recent Orders</h3>
+<ul>
+  <% orders.forEach(o => { %>
+    <li>#<%= o._id %> — <%= o.status %></li>
+  <% }) %>
+</ul>

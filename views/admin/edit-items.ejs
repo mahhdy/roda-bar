@@ -1,0 +1,26 @@
+<h2>Edit Menu Items</h2>
+
+<table>
+  <tr>
+    <th>Name</th><th>Price</th><th>Available</th><th>Update</th>
+  </tr>
+
+  <% items.forEach(i => { %>
+    <tr>
+      <form method="POST" action="/admin/items/update">
+        <td><%= i.name_en %></td>
+        <td><input name="price" value="<%= i.price %>"></td>
+        <td>
+          <select name="available">
+            <option value="true" <%= i.available ? 'selected' : '' %>>Yes</option>
+            <option value="false" <%= !i.available ? 'selected' : '' %>>No</option>
+          </select>
+        </td>
+        <td>
+          <input type="hidden" name="id" value="<%= i._id %>">
+          <button>Save</button>
+        </td>
+      </form>
+    </tr>
+  <% }) %>
+</table>

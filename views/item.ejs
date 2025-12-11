@@ -1,0 +1,13 @@
+<% layout('layout') %>
+<div class="item-details">
+  <img src="<%= item.images[0] %>" class="item-img">
+  <h2><%= lang === 'fr' ? item.name_fr : item.name_en %></h2>
+  <p><%= lang === 'fr' ? item.description_fr : item.description_en %></p>
+
+  <form method="POST" action="/order/add">
+    <input type="hidden" name="name" value="<%= item.name_en %>">
+    <input type="hidden" name="price" value="<%= item.price %>">
+
+    <button class="btn">Add to Cart — $<%= item.price %></button>
+  </form>
+</div>

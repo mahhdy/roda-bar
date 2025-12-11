@@ -1,0 +1,12 @@
+<% layout('layout') %>
+<h2><%= lang === 'fr' ? 'Menu' : 'Menu' %></h2>
+
+<div class="menu-grid">
+  <% items.forEach(item => { %>
+    <a class="menu-card" href="/item/<%= item._id %>">
+      <img src="<%= item.images[0] %>">
+      <h3><%= lang === 'fr' ? item.name_fr : item.name_en %></h3>
+      <span class="price">$<%= item.price %></span>
+    </a>
+  <% }) %>
+</div>
