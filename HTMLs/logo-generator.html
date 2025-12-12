@@ -2,7 +2,9 @@
 <html>
 <head>
     <title>Roda Bar Logo Generator</title>
-    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+    <!-- <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet"> -->
+    <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiB2aWV3Qm94PSIwIDAgMjAwIDIwMCI+PGNpcmNsZSBjeD0iMTAwIiBjeT0iMTAwIiByPSI5OCIgZmlsbD0iIzAwMDAwMCIvPjxwYXRoIGQ9Ik0gNDUgMzUgQSA3NSA3NSAwIDAgMCA0NSAxNjUiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0M0QTA1MiIgc3Ryb2tlLXdpZHRoPSIyLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjx0ZXh0IHg9IjEwMCIgeT0iMTA1IiBmb250LWZhbWlseT0iJ0JydXNoIFNjcmlwdCBNVCcsIGN1cnNpdmUiIGZvbnQtc2l6ZT0iNTIiIGZpbGw9IiNDNEEwNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPlJvZGE8L3RleHQ+PHRleHQgeD0iMTMwIiB5PSIxNDAiIGZvbnQtZmFtaWx5PSInQnJ1c2ggU2NyaXB0IE1UJywgY3Vyc2l2ZSIgZm9udC1zaXplPSIyOCIgZmlsbD0iI0M0QTA1MiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+YmFyPC90ZXh0Pjwvc3ZnPg==">
+
     <style>
         body {
             display: flex;
@@ -47,6 +49,35 @@
 <body>
     <h1>Roda Bar Logo Generator</h1>
     
+
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Black Circle Background -->
+  <circle cx="100" cy="100" r="98" fill="#000000"/>
+  
+  <!-- Gold Arc (partial circle on left) -->
+  <path d="M 45 35 
+           A 75 75 0 0 0 45 165" 
+        fill="none" 
+        stroke="#C4A052" 
+        stroke-width="2.5"
+        stroke-linecap="round"/>
+  
+  <!-- "Roda" Text -->
+  <text x="100" y="105" 
+        font-family="'Brush Script MT', 'Great Vibes', cursive" 
+        font-size="52" 
+        fill="#C4A052" 
+        text-anchor="middle"
+        font-weight="400">Roda</text>
+  
+  <!-- "bar" Text -->
+  <text x="130" y="140" 
+        font-family="'Brush Script MT', 'Great Vibes', cursive" 
+        font-size="28" 
+        fill="#C4A052" 
+        text-anchor="middle"
+        font-weight="300">bar</text>
+</svg>
     <div class="logo-container">
         <div class="size-label">512 x 512 (High Res)</div>
         <canvas id="logo512" width="512" height="512"></canvas>

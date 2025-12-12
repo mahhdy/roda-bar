@@ -256,7 +256,16 @@
                 <li class="nav-item"><a class="nav-link" :class="{active: adminTab==='orders'}" href="#" @click="adminTab='orders'">{{ t.activeOrders || 'Active Orders' }}</a></li>
                 <li class="nav-item"><a class="nav-link" :class="{active: adminTab==='menu'}" href="#" @click="adminTab='menu'">{{ t.menuManager }}</a></li>
             </ul>
-
+            <!-- QR Code Display for Admin -->
+            <div class="admin-panel text-center mb-4">
+                <h4 class="text-gold mb-3">Menu QR Code</h4>
+                <div class="bg-white p-3 d-inline-block rounded">
+                    <!-- Generates a QR code automatically using a free API -->
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://roda-bar.ca/" alt="Menu QR">
+                </div>
+                <p class="small text-muted mt-2">Show this to customers to scan</p>
+                <a href="https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=https://roda-bar.ca/" target="_blank" class="btn btn-sm btn-outline-light mt-2">Download High Res</a>
+            </div>
             <!-- Orders Tab -->
             <div v-if="adminTab === 'orders'">
                 <div v-for="o in allOrders.slice().reverse()" class="admin-panel mb-3">

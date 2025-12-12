@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roda Bar & Restaurant | Thornhill - Menu & Online Ordering</title>
+    <meta name="description" content="Roda Bar & Restaurant - 7359 Yonge St, Thornhill, ON. Modern menu, online ordering, order tracking. Managed by Mori Shojaie.">
+    <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiB2aWV3Qm94PSIwIDAgMjAwIDIwMCI+PGNpcmNsZSBjeD0iMTAwIiBjeT0iMTAwIiByPSI5OCIgZmlsbD0iIzAwMDAwMCIvPjxwYXRoIGQ9Ik0gNDUgMzUgQSA3NSA3NSAwIDAgMCA0NSAxNjUiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0M0QTA1MiIgc3Ryb2tlLXdpZHRoPSIyLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjx0ZXh0IHg9IjEwMCIgeT0iMTA1IiBmb250LWZhbWlseT0iJ0JydXNoIFNjcmlwdCBNVCcsIGN1cnNpdmUiIGZvbnQtc2l6ZT0iNTIiIGZpbGw9IiNDNEEwNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPlJvZGE8L3RleHQ+PHRleHQgeD0iMTMwIiB5PSIxNDAiIGZvbnQtZmFtaWx5PSInQnJ1c2ggU2NyaXB0IE1UJywgY3Vyc2l2ZSIgZm9udC1zaXplPSIyOCIgZmlsbD0iI0M0QTA1MiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+YmFyPC90ZXh0Pjwvc3ZnPg==">
+       
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- Vue 3 (Advanced Framework but Static) -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- EmailJS -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+    <style>
+        :root {
+            --gold: #d4af37;
+            --dark-bg: #111;
+            --card-bg: #1a1a1a;
+        }
+        body { background-color: var(--dark-bg); color: #fff; font-family: 'Montserrat', sans-serif; }
+        
+        /* Navbar & Logo */
+        .navbar { background-color: #000; border-bottom: 1px solid #333; padding: 10px 0; }
+        .navbar-brand { 
+            color: var(--gold) !important; 
+            font-family: 'Great Vibes', cursive; 
+            font-size: 2.2rem; 
+            display: flex; 
+            align-items: center; 
+            gap: 10px;
+        }
+        .logo-svg { fill: var(--gold); height: 40px; width: 40px; }
+        .nav-link { color: var(--gold) !important; transition: 0.3s; font-weight: 500; }
+        .nav-link:hover, .nav-link.active { color: #fff !important; }
+
+        /* Helpers */
+        .text-gold { color: var(--gold) !important; }
+        .bg-gold { background-color: var(--gold) !important; color: #000; }
+        .btn-gold { 
+            background: linear-gradient(45deg, #d4af37, #b8962e); 
+            color: #000; font-weight: bold; border: none; 
+            transition: transform 0.2s;
+        }
+        .btn-gold:hover { background: #ffd700; transform: translateY(-2px); }
+        .btn-gold:disabled { background: #444; color: #888; transform: none; }
+
+        /* Layout */
+        .page-section { padding-top: 100px; padding-bottom: 50px; min-height: 100vh; }
+        .fade-enter-active, .fade-leave-active { transition: opacity 0.3s ease; }
+        .fade-enter-from, .fade-leave-to { opacity: 0; }
+
+        /* Menu Cards */
+        .item-card { 
+            background: var(--card-bg); 
+            border: 1px solid #333; 
+            border-radius: 12px; 
+            overflow: hidden; 
+            height: 100%; 
+            display: flex; 
+            flex-direction: column;
+            transition: 0.3s;
+        }
+        .item-card:hover { border-color: var(--gold); box-shadow: 0 10px 30px rgba(212,175,55,0.15); }
+        .card-img-wrapper { height: 240px; overflow: hidden; position: relative; }
+        .card-img-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+        
+        /* Category Selector */
+        .cat-scroller { overflow-x: auto; white-space: nowrap; padding-bottom: 10px; margin-bottom: 20px; }
+        .cat-btn { 
+            background: transparent; border: 1px solid var(--gold); color: var(--gold); 
+            padding: 8px 20px; border-radius: 50px; margin-right: 10px; transition: 0.3s; 
+        }
+        .cat-btn.active, .cat-btn:hover { background: var(--gold); color: #000; }
+        /* Footer */
+        .footer {
+            background: linear-gradient(135deg, #000 0%, #111 100%);
+            border-top: 1px solid var(--gold);
+            padding: 60px 0 30px;
+        }
+        .manager-photo {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--gold);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        /* Admin & Inputs */
+        .admin-panel { background: #222; padding: 20px; border-radius: 10px; border: 1px solid #444; }
+        .form-control, .form-select { 
+            background-color: #000; border: 1px solid #444; color: #fff; 
+        }
+        .form-control:focus { background-color: #111; color: #fff; border-color: var(--gold); box-shadow: none; }
+        
+        .lang-flag { cursor: pointer; opacity: 0.5; transition: 0.3s; font-size: 1.2rem; }
+        .lang-flag.active { opacity: 1; transform: scale(1.2); }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#" @click.prevent="currentPage='menu'">
+                <!-- SVG LOGO -->
+                <svg class="logo-svg" viewBox="0 0 24 24">
+                    <path d="M11 9H9V2H7v7H5V2H3v7c0 2.12 1.66 3.84 3.75 3.97V22h2.5v-9.03C11.34 12.84 13 11.12 13 9V2h-2v7zm5-3v8h2.5v8H21V2c-2.76 0-5 2.24-5 4z"/>
+                </svg>
+                Roda Bar
+            </a>
+            
+            <div class="d-flex align-items-center gap-3 order-lg-last ms-3">
+                <!-- Language Switcher -->
+                <div class="d-flex gap-2">
+                    <span class="lang-flag" :class="{active: lang==='en'}" @click="setLang('en')">🇺🇸</span>
+                    <span class="lang-flag" :class="{active: lang==='fr'}" @click="setLang('fr')">🇫🇷</span>
+                    <span class="lang-flag" :class="{active: lang==='fa'}" @click="setLang('fa')">🇫🇷</span>                    
+                </div>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto text-uppercase small fw-bold">
+                    <li class="nav-item"><a class="nav-link" :class="{active: currentPage==='menu'}" href="#" @click="currentPage='menu'">{{ t.menu }}</a></li>
+                    <li class="nav-item"><a class="nav-link" :class="{active: currentPage==='cart'}" href="#" @click="currentPage='cart'">{{ t.cart }} ({{ cartCount }})</a></li>
+                    <li class="nav-item"><a class="nav-link" :class="{active: currentPage==='track'}" href="#" @click="currentPage='track'">{{ t.track }}</a></li>
+                    <li class="nav-item"><a class="nav-link" :class="{active: currentPage==='admin'}" href="#" @click="currentPage='admin'">Admin</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MENU PAGE -->
+    <div v-if="currentPage === 'menu'" class="container page-section">
+        <h2 class="text-center mb-4 text-gold">{{ t.ourMenu }}</h2>
+        
+        <!-- Category Filter -->
+        <div class="cat-scroller text-center">
+            <button v-for="cat in categories" 
+                    class="cat-btn" 
+                    :class="{active: selectedCategory === cat}"
+                    @click="selectedCategory = cat">
+                {{ cat }}
+            </button>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-4" v-for="item in filteredItems" :key="item.id">
+                <div class="item-card">
+                    <!-- Carousel/Image -->
+                    <div :id="'carousel-'+item.id" class="carousel slide card-img-wrapper" data-bs-ride="carousel">
+                        <div class="carousel-inner h-100">
+                            <div v-for="(img, index) in item.images" :class="['carousel-item', 'h-100', {active: index===0}]">
+                                <img :src="img" :alt="item.name[lang]">
+                            </div>
+                        </div>
+                        <button v-if="item.images.length > 1" class="carousel-control-prev" type="button" :data-bs-target="'#carousel-'+item.id" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon"></span>
+                        </button>
+                        <button v-if="item.images.length > 1" class="carousel-control-next" type="button" :data-bs-target="'#carousel-'+item.id" data-bs-slide="next">
+                            <span class="carousel-control-next-icon"></span>
+                        </button>
+                    </div>
+
+                    <!-- Content -->
+                    <div class="p-3 d-flex flex-column flex-grow-1">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <h5 class="mb-1">{{ item.name[lang] }}</h5>
+                            <span class="text-gold fw-bold">${{ item.price.toFixed(2) }}</span>
+                        </div>
+                        <p class="small text-secondary flex-grow-1">{{ item.desc[lang] }}</p>
+                        
+                        <div v-if="item.available" class="mt-auto">
+                            <div class="input-group">
+                                <input type="number" class="form-control text-center bg-dark text-white border-secondary" v-model.number="item.tempQty" min="1" max="10">
+                                <button class="btn btn-gold w-50" @click="addToCart(item)">
+                                    {{ t.addToCart }}
+                                </button>
+                            </div>
+                        </div>
+                        <div v-else class="mt-auto text-danger fw-bold text-center border border-danger p-2 rounded">
+                            {{ t.soldOut }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CART PAGE -->
+    <div v-if="currentPage === 'cart'" class="container page-section">
+        <h2 class="text-center mb-4 text-gold">{{ t.yourOrder }}</h2>
+        
+        <div v-if="cart.length === 0" class="text-center py-5">
+            <p class="fs-4 text-muted">{{ t.emptyCart }}</p>
+            <button class="btn btn-gold mt-3" @click="currentPage='menu'">{{ t.backToMenu }}</button>
+        </div>
+
+        <div v-else class="row justify-content-center">
+            <div class="col-lg-8">
+                <ul class="list-group mb-4">
+                    <li v-for="(item, index) in cart" class="list-group-item bg-dark text-white border-secondary d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center gap-3">
+                            <img :src="item.image" style="width: 50px; height: 50px; object-fit: cover; border-radius: 6px;">
+                            <div>
+                                <h6 class="mb-0">{{ item.name[lang] }} <span class="text-gold">x{{ item.qty }}</span></h6>
+                                <small class="text-muted" v-if="item.note">{{ t.note }}: {{ item.note }}</small>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <div class="fw-bold">${{ (item.price * item.qty).toFixed(2) }}</div>
+                            <button class="btn btn-sm btn-outline-danger mt-1 py-0" @click="removeFromCart(index)">x</button>
+                        </div>
+                    </li>
+                </ul>
+                
+                <div class="admin-panel text-center">
+                    <h3 class="mb-3">{{ t.total }}: <span class="text-gold">${{ cartTotal }}</span></h3>
+                    <input type="text" class="form-control mb-2" v-model="customerEmail" :placeholder="t.emailPlaceholder">
+                    <textarea class="form-control mb-3" v-model="customerNote" :placeholder="t.notePlaceholder"></textarea>
+                    <button class="btn btn-gold btn-lg w-100" @click="submitOrder">{{ t.submitOrder }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TRACK PAGE -->
+    <div v-if="currentPage === 'track'" class="container page-section">
+        <h2 class="text-center text-gold mb-4">{{ t.trackTitle }}</h2>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="input-group mb-4">
+                    <input type="text" class="form-control" v-model="trackId" :placeholder="t.enterOrderNum">
+                    <button class="btn btn-gold" @click="trackOrder">{{ t.track }}</button>
+                </div>
+                <div v-if="trackStatus" class="alert alert-dark border-gold text-center">
+                    <h4>{{ t.status }}: <span class="text-gold">{{ trackStatus }}</span></h4>
+                </div>
+            </div>
+        </div>
+        
+        <h4 class="mt-5 text-muted">{{ t.recentOrders }}</h4>
+        <div class="list-group">
+            <button v-for="order in myHistory" class="list-group-item list-group-item-action bg-dark text-white border-secondary" @click="trackId = order.id; trackOrder()">
+                #{{ order.id }} - <span class="text-gold">{{ order.status }}</span> - ${{ order.total }}
+            </button>
+        </div>
+    </div>
+
+    <!-- ADMIN PAGE -->
+    <div v-if="currentPage === 'admin'" class="container page-section">
+        <h2 class="text-gold mb-4">Admin Dashboard</h2>
+        
+        <div v-if="!isAdmin" class="row justify-content-center">
+            <div class="col-md-4">
+                <input type="password" class="form-control mb-2" v-model="adminPass" placeholder="Password (613)">
+                <button class="btn btn-gold w-100" @click="loginAdmin">Login</button>
+            </div>
+        </div>
+
+        <div v-else>
+            <ul class="nav nav-tabs border-secondary mb-4">
+                <li class="nav-item"><a class="nav-link" :class="{active: adminTab==='orders'}" href="#" @click="adminTab='orders'">Active Orders</a></li>
+                <li class="nav-item"><a class="nav-link" :class="{active: adminTab==='menu'}" href="#" @click="adminTab='menu'">Menu Manager</a></li>
+            </ul>
+
+            <!-- Orders Tab -->
+            <div v-if="adminTab === 'orders'">
+                <div v-for="o in allOrders.slice().reverse()" class="admin-panel mb-3">
+                    <div class="d-flex justify-content-between">
+                        <h5>Order #{{ o.id }} <small class="text-muted">{{ o.time }}</small></h5>
+                        <h5 class="text-gold">${{ o.total }}</h5>
+                    </div>
+                    <p class="mb-2"><span v-for="i in o.items" class="badge bg-secondary me-1">{{ i.qty }}x {{ i.name.en }}</span></p>
+                    <p v-if="o.email" class="small text-muted">User: {{ o.email }}</p>
+                    <p v-if="o.custNote" class="small text-warning">Note: {{ o.custNote }}</p>
+                    <select class="form-select w-auto" v-model="o.status" @change="saveOrders">
+                        <option>Submitted</option>
+                        <option>Cooking</option>
+                        <option>Ready</option>
+                        <option>Served</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Menu Editor Tab (Bilingual) -->
+            <div v-if="adminTab === 'menu'">
+                <button class="btn btn-success mb-3" @click="addNewItem">+ Add New Item</button>
+                <div v-for="(item, idx) in menu" :key="idx" class="admin-panel mb-3">
+                    <div class="row g-2">
+                        <div class="col-md-3">
+                            <label class="small text-muted">Name (EN)</label>
+                            <input class="form-control form-control-sm" v-model="item.name.en">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="small text-muted">Name (FR)</label>
+                            <input class="form-control form-control-sm" v-model="item.name.fr">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="small text-muted">Price</label>
+                            <input type="number" class="form-control form-control-sm" v-model="item.price">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="small text-muted">Category</label>
+                            <input class="form-control form-control-sm" v-model="item.category">
+                        </div>
+                        <div class="col-md-2 d-grid">
+                            <label class="small text-muted">Action</label>
+                            <button class="btn btn-danger btn-sm" @click="deleteItem(idx)">Delete</button>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="small text-muted">Description (EN)</label>
+                            <textarea class="form-control form-control-sm" v-model="item.desc.en"></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="small text-muted">Description (FR)</label>
+                            <textarea class="form-control form-control-sm" v-model="item.desc.fr"></textarea>
+                        </div>
+                        <div class="col-12">
+                            <label class="small text-muted">Image URLs (comma separated)</label>
+                            <input class="form-control form-control-sm" :value="item.images.join(', ')" @input="updateImages(item, $event)">
+                        </div>
+                        <div class="col-12">
+                             <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" v-model="item.available">
+                                <label class="form-check-label text-white">Available</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-primary mt-3" @click="saveMenu">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- Footer -->
+<footer class="footer mt-5">
+    <div class="container">
+        <div class="row g-5">
+            <!-- Location -->
+            <div class="col-lg-4">
+                <div class="logo mb-4 mx-auto d-block" style="width: 80px; height: 80px; font-size: 1.5rem;"></div>
+                <h4 class="text-gold mb-3 lang-text" data-en="Roda Bar &amp; Restaurant" data-fr="Roda Bar &amp; Restaurant">Roda Bar & Restaurant</h4>
+                <p class="lang-text" data-en="7359 Yonge St<br>Thornhill, ON L3T 2B3<br>Canada" data-fr="7359 Yonge St<br>Thornhill, ON L3T 2B3<br>Canada">7359 Yonge St<br>Thornhill, ON L3T 2B3<br>Canada</p>
+                <div class="mt-4">
+                    <a href="https://maps.google.com/?q=7359+Yonge+St,Thornhill,ON" target="_blank" class="btn btn-outline-light btn-sm">
+                        <i class="bi bi-geo-alt me-1"></i><span class="lang-text" data-en="Directions" data-fr="Itinéraire">Directions</span>
+                    </a>
+                </div>
+            </div>
+
+            
+            <div class="col-lg-4 text-center">
+            </div>
+
+            <!-- Contact & Rating -->
+            <div class="col-lg-4">
+                <h5 class="text-gold mb-4 lang-text" data-en="Contact &amp; Reviews" data-fr="Contact &amp; Avis">Contact & Reviews</h5>
+                <div class="mb-4">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="bi bi-telephone text-gold me-2"></i>
+                        <span class="lang-text" data-en="(905) 731-RODA" data-fr="(905) 731-RODA">(905) 731-RODA</span>
+                    </div>
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="bi bi-envelope text-gold me-2"></i>
+                        <span class="lang-text" data-en="info@rodabar.ca" data-fr="info@rodabar.ca">info@rodabar.ca</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-clock text-gold me-2"></i>
+                        <span class="lang-text" data-en="Open 11AM-11PM" data-fr="Ouvert 11h-23h">Open 11AM-11PM</span>
+                    </div>
+                </div>
+                
+                <!-- Rating -->
+                <div>
+                    <div class="d-flex align-items-center mb-2">
+                        <span class="star">★★★★★</span>
+                        <span class="ms-2 fw-bold text-gold">4.9</span>
+                        <span class="small text-muted ms-1">(1,247 reviews)</span>
+                    </div>
+                    <a href="#feedback" class="btn btn-outline-light btn-sm lang-text" data-en="Leave Review" data-fr="Laisser un avis">Leave Review</a>
+                </div>
+            </div>
+        </div>
+        
+        <hr class="my-5 opacity-25">
+        <div class="text-center">
+            <p class="mb-0 small text-muted lang-text" data-en="&copy; 2024 Roda Bar &amp; Restaurant. All rights reserved. | Made with ❤️ in Toronto." data-fr="&copy; 2024 Roda Bar &amp; Restaurant. Tous droits réservés. | Fait avec ❤️ à Toronto.">&copy; 2024 Roda Bar & Restaurant. All rights reserved. | Made with ❤️ in Toronto.</p>
+        </div>
+    </div>
+</footer>
+<script>
+const { createApp } = Vue;
+
+/* --- BILINGUAL DATA & CONTENT --- */
+const initialMenu = [
+    {
+        id: 1, category: "Salads", price: 14.99, available: true, tempQty: 1,
+        name: { en: "Caesar Salad", fr: "Salade César", fa: "سالاد سزار" },
+        desc: { 
+            en: "Crisp romaine hearts, hand‑torn and tossed in 45g light yogurt‑based Caesar dressing, finished with 10g shaved parmesan, 20g baked whole‑grain croutons, and fresh lemon.", 
+            fr: "Cœurs de romaine croquants, déchirés à la main et mélangés dans 45 g de vinaigrette César légère au yogourt, garnis de 10 g de parmesan râpé, 20 g de croûtons de grains entiers cuits au four et de citron frais.", 
+            fa: "کاهوی تازه، آغشته به ۴۵ گرم سس سزار رژیمی بر پایه ماست، به همراه ۱۰ گرم پنیر پارمزان رنده شده، ۲۰ گرم نان کروتون غلات کامل تنوری و لیموی تازه." 
+        },
+        images: ["https://images.unsplash.com/photo-1550304943-4f24f54ddde9?w=600","https://images.unsplash.com/photo-1550304943-4f24f54ddde9?w=600"]
+    },
+    {
+        id: 2, category: "Salads", price: 12.99, available: true, tempQty: 1,
+        name: { en: "Garden Salad", fr: "Salade du Jardin", fa: "سالاد فصل (باغچه)" },
+        desc: { 
+            en: "120g mix of romaine, baby spinach, and arugula with 60g cucumber, cherry tomato, and carrot, served with 30ml extra‑virgin olive‑oil and lemon vinaigrette.", 
+            fr: "Mélange de 120 g de romaine, bébés épinards et roquette avec 60 g de concombre, tomates cerises et carottes, servi avec 30 ml de vinaigrette à l'huile d'olive extra-vierge et citron.", 
+            fa: "۱۲۰ گرم مخلوط کاهو، اسفناج و آرگولا به همراه ۶۰ گرم خیار، گوجه گیلاسی و هویج، سرو شده با ۳۰ میلی‌لیتر سس وینگرت روغن زیتون بکر و لیمو." 
+        },
+        images: ["https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600"]
+    },
+    {
+        id: 3, category: "Salads", price: 17.99, available: true, tempQty: 1,
+        name: { en: "Chicken Caesar Salad", fr: "Salade César au Poulet", fa: "سالاد سزار با مرغ" },
+        desc: { 
+            en: "120g grilled skinless chicken breast over romaine hearts with 40g light yogurt Caesar, 10g shaved parmesan, and 20g whole‑grain croutons.", 
+            fr: "120 g de poitrine de poulet grillée sans peau sur cœurs de romaine avec 40 g de César léger au yogourt, 10 g de parmesan râpé et 20 g de croûtons de grains entiers.", 
+            fa: "۱۲۰ گرم سینه مرغ کبابی بدون پوست روی کاهو، به همراه ۴۰ گرم سس سزار رژیمی ماست، ۱۰ گرم پنیر پارمزان و ۲۰ گرم نان کروتون غلات کامل." 
+        },
+        images: ["https://images.unsplash.com/photo-1580013759032-c96505e24c1f?w=600"]
+    },
+    {
+        id: 4, category: "Salads", price: 13.99, available: true, tempQty: 1,
+        name: { en: "Baby Spinach Salad", fr: "Salade de Jeunes Épinards", fa: "سالاد بیبی اسفناج" },
+        desc: { 
+            en: "120g fresh baby spinach leaves with 30g cherry tomatoes, 20g red onion, 10g toasted almonds, and 30ml light balsamic vinaigrette.", 
+            fr: "120 g de feuilles de bébés épinards frais avec 30 g de tomates cerises, 20 g d'oignon rouge, 10 g d'amandes grillées et 30 ml de vinaigrette balsamique légère.", 
+            fa: "۱۲۰ گرم برگ اسفناج تازه با ۳۰ گرم گوجه گیلاسی، ۲۰ گرم پیاز قرمز، ۱۰ گرم بادام برشته و ۳۰ میلی‌لیتر سس بالزامیک رژیمی." 
+        },
+        images: ["https://images.unsplash.com/photo-1576021182211-9ea8dced3690?w=600"]
+    },
+    {
+        id: 5, category: "Salads", price: 8.99, available: true, tempQty: 1,
+        name: { en: "Coleslaw", fr: "Salade de Chou", fa: "سالاد کلم (کالسلو)" },
+        desc: { 
+            en: "80g shredded green and red cabbage with 20g carrot, lightly dressed in 25g yogurt‑mustard slaw dressing sweetened with a touch of honey.", 
+            fr: "80 g de chou vert et rouge râpé avec 20 g de carotte, légèrement assaisonné de 25 g de vinaigrette au yogourt et moutarde adoucie avec une touche de miel.", 
+            fa: "۸۰ گرم کلم قرمز و سبز خرد شده با ۲۰ گرم هویج، طعم‌دار شده با ۲۵ گرم سس ماست و خردل با کمی عسل." 
+        },
+        images: ["https://images.unsplash.com/photo-1623227413729-16c4f034df48?w=600"]
+    },
+    {
+        id: 6, category: "Salads", price: 15.99, available: true, tempQty: 1,
+        name: { en: "Chicken Salad", fr: "Salade de Poulet", fa: "سالاد مرغ" },
+        desc: { 
+            en: "120g diced grilled chicken breast folded with 30g Greek yogurt, celery, herbs, and lemon, served on a bed of crisp mixed greens.", 
+            fr: "120 g de poitrine de poulet grillée en dés mélangée avec 30 g de yogourt grec, céleri, herbes et citron, servi sur un lit de légumes verts croquants.", 
+            fa: "۱۲۰ گرم سینه مرغ کبابی نگینی مخلوط شده با ۳۰ گرم ماست یونانی، کرفس، سبزیجات معطر و لیمو، سرو شده روی بستری از سبزیجات تازه." 
+        },
+        images: ["https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=600"]
+    },
+    {
+        id: 7, category: "Appetizers", price: 8.99, available: true, tempQty: 1,
+        name: { en: "Soup (Daily)", fr: "Soupe du Jour", fa: "سوپ روز" },
+        desc: { 
+            en: "300ml chef’s small‑batch soup based on clear vegetable stock with seasonal vegetables and lean protein, finished with fresh herbs.", 
+            fr: "300 ml de soupe artisanale du chef à base de bouillon de légumes clair avec légumes de saison et protéines maigres, finie avec des herbes fraîches.", 
+            fa: "۳۰۰ میلی‌لیتر سوپ مخصوص سرآشپز با پایه آب سبزیجات، سبزیجات فصلی و پروتئین کم‌چرب، تزیین شده با سبزیجات معطر." 
+        },
+        images: ["https://images.unsplash.com/photo-1547592166-23ac45744acd?w=600"]
+    },
+    {
+        id: 8, category: "Appetizers", price: 6.99, available: true, tempQty: 1,
+        name: { en: "Garlic Bread", fr: "Pain à l'Ail", fa: "نان سیر" },
+        desc: { 
+            en: "Two slices (60g) warm whole‑grain baguette brushed with 8ml extra‑virgin olive oil, fresh garlic, and parsley, baked until crisp.", 
+            fr: "Deux tranches (60 g) de baguette multigrain chaude badigeonnées de 8 ml d'huile d'olive extra-vierge, ail frais et persil, cuites jusqu'à ce qu'elles soient croustillantes.", 
+            fa: "دو تکه (۶۰ گرم) باگت غلات کامل گرم، آغشته به ۸ میلی‌لیتر روغن زیتون بکر، سیر تازه و جعفری، برشته شده در فر." 
+        },
+        images: ["https://images.unsplash.com/photo-1619535860434-caf11ffaa25e?w=600"]
+    },
+    {
+        id: 9, category: "Appetizers", price: 8.99, available: true, tempQty: 1,
+        name: { en: "Cheese Bread", fr: "Pain au Fromage", fa: "نان پنیر" },
+        desc: { 
+            en: "Two slices (60g) whole‑grain baguette topped with 20g part‑skim mozzarella and herbs, oven‑baked for a light, melty finish.", 
+            fr: "Deux tranches (60 g) de baguette multigrain garnies de 20 g de mozzarella partiellement écrémée et d'herbes, cuites au four pour une finition fondante et légère.", 
+            fa: "دو تکه (۶۰ گرم) باگت غلات کامل پوشیده شده با ۲۰ گرم پنیر موزارلا کم‌چرب و سبزیجات معطر، تنوری شده." 
+        },
+        images: ["https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=600"]
+    },
+    {
+        id: 10, category: "Appetizers", price: 14.99, available: true, tempQty: 1,
+        name: { en: "Nachos (Beef)", fr: "Nachos au Bœuf", fa: "ناچوز با گوشت" },
+        desc: { 
+            en: "80g baked corn tortilla chips topped with 70g extra‑lean seasoned ground beef, 40g black beans, 25g reduced‑fat cheese, pico de gallo, and fresh jalapeños.", 
+            fr: "80 g de chips de tortilla de maïs cuites au four garnies de 70 g de bœuf haché extra-maigre assaisonné, 40 g de haricots noirs, 25 g de fromage réduit en gras, pico de gallo et jalapeños frais.", 
+            fa: "۸۰ گرم چیپس ذرت تنوری با ۷۰ گرم گوشت چرخ‌کرده کم‌چرب، ۴۰ گرم لوبیا سیاه، ۲۵ گرم پنیر کم‌چرب، پیکو د گالو و فلفل هالوپینو." 
+        },
+        images: ["https://images.unsplash.com/photo-1582169296194-e9d648411dff?w=600"]
+    },
+    {
+        id: 11, category: "Appetizers", price: 14.99, available: true, tempQty: 1,
+        name: { en: "Nachos (Chicken)", fr: "Nachos au Poulet", fa: "ناچوز با مرغ" },
+        desc: { 
+            en: "80g baked corn tortilla chips with 80g grilled chicken strips, 40g black beans, 25g reduced‑fat cheese, pico de gallo, and 30g guacamole.", 
+            fr: "80 g de chips de tortilla de maïs cuites au four avec 80 g de lanières de poulet grillé, 40 g de haricots noirs, 25 g de fromage réduit en gras, pico de gallo et 30 g de guacamole.", 
+            fa: "۸۰ گرم چیپس ذرت تنوری با ۸۰ گرم فیله مرغ کبابی، ۴۰ گرم لوبیا سیاه، ۲۵ گرم پنیر کم‌چرب، پیکو د گالو و ۳۰ گرم گواکامولی." 
+        },
+        images: ["https://images.unsplash.com/photo-1513456852971-30c0b8199d4d?w=600"]
+    },
+    {
+        id: 12, category: "Appetizers", price: 18.99, available: true, tempQty: 1,
+        name: { en: "Hot Plate", fr: "Assiette Chaude", fa: "سینی داغ (میکس)" },
+        desc: { 
+            en: "Sharing platter of 80g grilled chicken skewers, 60g grilled shrimp, and 120g seasonal grilled vegetables with a side of yogurt‑herb dip.", 
+            fr: "Plateau à partager de 80 g de brochettes de poulet grillé, 60 g de crevettes grillées et 120 g de légumes de saison grillés avec une trempette au yogourt et herbes.", 
+            fa: "سینی اشتراکی شامل ۸۰ گرم سیخ مرغ کبابی، ۶۰ گرم میگو کبابی، و ۱۲۰ گرم سبزیجات کبابی فصلی به همراه دیپ ماست و سبزیجات." 
+        },
+        images: ["https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600"]
+    },
+    {
+        id: 13, category: "Appetizers", price: 10.99, available: true, tempQty: 1,
+        name: { en: "Poutine", fr: "Poutine", fa: "پوتین (سیب‌زمینی و پنیر)" },
+        desc: { 
+            en: "160g oven‑roasted potato wedges with 35g reduced‑fat cheese curds and 60ml light house gravy made from vegetable stock.", 
+            fr: "160 g de quartiers de pommes de terre rôtis au four avec 35 g de fromage en grains réduit en gras et 60 ml de sauce maison légère à base de bouillon de légumes.", 
+            fa: "۱۶۰ گرم سیب‌زمینی تنوری با ۳۵ گرم پنیر دلمه کم‌چرب و ۶۰ میلی‌لیتر سس گریوی مخصوص تهیه شده از عصاره سبزیجات." 
+        },
+        images: ["https://images.unsplash.com/photo-1586805608485-add336722759?w=600"]
+    },
+    {
+        id: 14, category: "Appetizers", price: 11.99, available: true, tempQty: 1,
+        name: { en: "Italian Poutine", fr: "Poutine Italienne", fa: "پوتین ایتالیایی" },
+        desc: { 
+            en: "160g oven‑roasted potato wedges topped with 80ml slow‑simmered tomato basil marinara and 30g part‑skim mozzarella.", 
+            fr: "160 g de quartiers de pommes de terre rôtis au four garnis de 80 ml de marinara tomate-basilic mijotée lentement et 30 g de mozzarella partiellement écrémée.", 
+            fa: "۱۶۰ گرم سیب‌زمینی تنوری پوشیده شده با ۸۰ میلی‌لیتر سس مارینارا ریحان و ۳۰ گرم پنیر موزارلا کم‌چرب." 
+        },
+        images: ["https://images.unsplash.com/photo-1586805608485-add336722759?w=600"]
+    },
+    {
+        id: 15, category: "Appetizers", price: 15.99, available: true, tempQty: 1,
+        name: { en: "Calamari", fr: "Calamars", fa: "کالاماری" },
+        desc: { 
+            en: "120g fresh calamari rings marinated in lemon and herbs, lightly dusted and oven‑baked, served with 30ml roasted‑pepper yogurt dip.", 
+            fr: "120 g d'anneaux de calamars frais marinés au citron et aux herbes, légèrement saupoudrés et cuits au four, servis avec 30 ml de trempette au yogourt et poivrons rôtis.", 
+            fa: "۱۲۰ گرم حلقه کالاماری تازه مزه‌دار شده با لیمو و سبزیجات، با روکش سبک و تنوری شده، سرو شده با دیپ ماست و فلفل کبابی." 
+        },
+        images: ["https://images.unsplash.com/photo-1604909052743-94e838986d24?w=600"]
+    },
+    {
+        id: 16, category: "Appetizers", price: 6.99, available: true, tempQty: 1,
+        name: { en: "Fries", fr: "Frites", fa: "سیب‌زمینی سرخ‌کرده" },
+        desc: { 
+            en: "160g skin‑on russet potato batons tossed in 8ml canola and sea salt, air‑fried until golden.", 
+            fr: "160 g de bâtonnets de pommes de terre Russet avec peau, mélangés dans 8 ml d'huile de canola et sel de mer, frits à l'air jusqu'à ce qu'ils soient dorés.", 
+            fa: "۱۶۰ گرم خلال سیب‌زمینی با پوست، آغشته به روغن کانولا و نمک دریا، سرخ شده در هواپز تا طلایی شود." 
+        },
+        images: ["https://images.unsplash.com/photo-1630384060421-cb20d0e0649d?w=600"]
+    },
+    {
+        id: 17, category: "Appetizers", price: 7.99, available: true, tempQty: 1,
+        name: { en: "Mashed Potato", fr: "Purée de Pommes de Terre", fa: "پوره سیب‌زمینی" },
+        desc: { 
+            en: "160g Yukon Gold potatoes mashed with 10ml extra‑virgin olive oil, warm skim milk, and chives.", 
+            fr: "160 g de pommes de terre Yukon Gold en purée avec 10 ml d'huile d'olive extra-vierge, lait écrémé chaud et ciboulette.", 
+            fa: "۱۶۰ گرم پوره سیب‌زمینی طلایی یوکان، تهیه شده با ۱۰ میلی‌لیتر روغن زیتون بکر، شیر کم‌چرب گرم و پیازچه." 
+        },
+        images: ["https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=600"]
+    },
+    {
+        id: 18, category: "Appetizers", price: 8.99, available: true, tempQty: 1,
+        name: { en: "Sweet Potato", fr: "Patate Douce", fa: "سیب‌زمینی شیرین" },
+        desc: { 
+            en: "160g roasted sweet potato wedges tossed with 5ml olive oil, smoked paprika, and sea salt.", 
+            fr: "160 g de quartiers de patates douces rôtis mélangés avec 5 ml d'huile d'olive, paprika fumé et sel de mer.", 
+            fa: "۱۶۰ گرم سیب‌زمینی شیرین تنوری، طعم‌دار شده با ۵ میلی‌لیتر روغن زیتون، پاپریکا دودی و نمک دریا." 
+        },
+        images: ["https://images.unsplash.com/photo-1574614217154-20a22eb2c270?w=600"]
+    },
+    {
+        id: 19, category: "Appetizers", price: 16.99, available: true, tempQty: 1,
+        name: { en: "Shrimp Cocktail", fr: "Cocktail de Crevettes", fa: "کوکتل میگو" },
+        desc: { 
+            en: "120g chilled poached shrimp served with 40ml house tomato‑horseradish cocktail sauce and fresh lemon.", 
+            fr: "120 g de crevettes pochées réfrigérées servies avec 40 ml de sauce cocktail maison tomate-raifort et citron frais.", 
+            fa: "۱۲۰ گرم میگو آب‌پز سرد شده، سرو شده با ۴۰ میلی‌لیتر سس کوکتل مخصوص (گوجه و ترب کوهی) و لیموی تازه." 
+        },
+        images: ["https://images.unsplash.com/photo-1625943555919-4d7494a4eb26?w=600"]
+    },
+    {
+        id: 20, category: "Appetizers", price: 9.99, available: true, tempQty: 1,
+        name: { en: "Onion Rings", fr: "Rondelles d'Oignon", fa: "پیاز سوخاری (حلقه)" },
+        desc: { 
+            en: "120g thick onion rings coated in whole‑wheat crumbs, oven‑baked and served with 30ml light yogurt‑garlic dip.", 
+            fr: "120 g de rondelles d'oignon épaisses enrobées de chapelure de blé entier, cuites au four et servies avec 30 ml de trempette légère yogourt-ail.", 
+            fa: "۱۲۰ گرم حلقه‌های پیاز ضخیم با روکش آرد سوخاری غلات کامل، تنوری شده و سرو شده با دیپ ماست و سیر رژیمی." 
+        },
+        images: ["https://images.unsplash.com/photo-1639024471283-03518883512d?w=600"]
+    },
+    {
+        id: 21, category: "Appetizers", price: 10.99, available: true, tempQty: 1,
+        name: { en: "Potato Skin", fr: "Pelures de Pommes de Terre", fa: "پوست سیب‌زمینی شکم‌پر" },
+        desc: { 
+            en: "Two roasted potato halves (180g total) filled with 40g black beans, 20g reduced‑fat cheese, salsa, and scallions.", 
+            fr: "Deux moitiés de pommes de terre rôties (180 g au total) remplies de 40 g de haricots noirs, 20 g de fromage réduit en gras, salsa et oignons verts.", 
+            fa: "دو نیمه سیب‌زمینی تنوری (۱۸۰ گرم) پر شده با ۴۰ گرم لوبیا سیاه، ۲۰ گرم پنیر کم‌چرب، سالسا و پیازچه." 
+        },
+        images: ["https://images.unsplash.com/photo-1600189020959-15d97f3547f8?w=600"]
+    },
+    {
+        id: 22, category: "Appetizers", price: 12.99, available: true, tempQty: 1,
+        name: { en: "Spinach Artichoke Dip", fr: "Trempette Épinards-Artichauts", fa: "دیپ اسفناج و آرتیشو" },
+        desc: { 
+            en: "90g warm spinach‑artichoke dip made with Greek yogurt, part‑skim mozzarella, and parmesan, served with 60g baked whole‑grain pita chips.", 
+            fr: "90 g de trempette chaude épinards-artichauts faite avec yogourt grec, mozzarella partiellement écrémée et parmesan, servie avec 60 g de chips de pita de grains entiers cuites au four.", 
+            fa: "۹۰ گرم دیپ گرم اسفناج و آرتیشو تهیه شده با ماست یونانی، موزارلا کم‌چرب و پارمزان، سرو شده با ۶۰ گرم چیپس پیتا غلات کامل." 
+        },
+        images: ["https://images.unsplash.com/photo-1576510306764-1662fb24fb35?w=600"]
+    },
+ {
+        id: 23, category: "Wings", price: 14.99, available: true, tempQty: 1,
+        name: { en: "BBQ Wings", fr: "Ailes BBQ", fa: "بال مرغ باربیکیو" },
+        desc: { 
+            en: "6 oven‑baked chicken wings (about 180g) tossed in 25g house smoky BBQ sauce made with tomato, spices, and reduced sugar.", 
+            fr: "6 ailes de poulet cuites au four (environ 180 g) mélangées dans 25 g de sauce BBQ fumée maison faite avec tomate, épices et sucre réduit.", 
+            fa: "۶ عدد بال مرغ تنوری (حدود ۱۸۰ گرم) آغشته به ۲۵ گرم سس باربیکیو دودی مخصوص تهیه شده با گوجه، ادویه و شکر کم." 
+        },
+        images: ["https://images.unsplash.com/photo-1520072959219-c595dc3f3a2a?w=600"]
+    },
+    {
+        id: 24, category: "Wings", price: 14.99, available: true, tempQty: 1,
+        name: { en: "Fried Wings (Light)", fr: "Ailes Frites (Légères)", fa: "بال سوخاری (لایت)" },
+        desc: { 
+            en: "6 wings (180g) lightly coated and flash‑fried in canola oil, then drained and finished in the oven with a dry spice rub to keep them crisp but not greasy.", 
+            fr: "6 ailes (180 g) légèrement enrobées et frites rapidement dans l'huile de canola, puis égouttées et finies au four avec un mélange d'épices sèches.", 
+            fa: "۶ عدد بال (۱۸۰ گرم) با روکش سبک، سرخ شده سریع در روغن کانولا و تکمیل پخت در فر با ادویه خشک (ترد و کم‌چرب)." 
+        },
+        images: ["https://images.unsplash.com/photo-1569691830917-2232d3082527?w=600"]
+    },
+    {
+        id: 25, category: "Wings", price: 14.99, available: true, tempQty: 1,
+        name: { en: "Baked Wings", fr: "Ailes Rôties", fa: "بال تنوری" },
+        desc: { 
+            en: "6 wings marinated in garlic, herbs, and lemon, oven‑roasted with no breading and finished with a light chili‑lime glaze.", 
+            fr: "6 ailes marinées dans l'ail, les herbes et le citron, rôties au four sans panure et finies avec un léger glaçage chili-lime.", 
+            fa: "۶ عدد بال مزه‌دار شده با سیر، سبزیجات و لیمو، کباب شده در فر بدون آرد سوخاری، با سس چیلی و لیمو." 
+        },
+        images: ["https://images.unsplash.com/photo-1527477396000-64ca9c0529cd?w=600"]
+    },
+    {
+        id: 26, category: "Wings", price: 15.99, available: true, tempQty: 1,
+        name: { en: "Tandoori Wings", fr: "Ailes Tandoori", fa: "بال تندوری" },
+        desc: { 
+            en: "6 wings marinated overnight in low‑fat yogurt, tandoori spices, garlic, and lemon juice, then baked in a high‑heat oven for a smoky finish.", 
+            fr: "6 ailes marinées toute la nuit dans du yogourt faible en gras, épices tandoori, ail et jus de citron, puis cuites au four à haute température.", 
+            fa: "۶ عدد بال خوابانده شده در ماست کم‌چرب، ادویه تندوری، سیر و آبلیمو، کباب شده در فر با حرارت بالا." 
+        },
+        images: ["https://images.unsplash.com/photo-1606755456889-6e344d5d9c24?w=600"]
+    },
+    {
+        id: 27, category: "Burgers", price: 15.99, available: true, tempQty: 1,
+        name: { en: "Classic Burger", fr: "Burger Classique", fa: "برگر کلاسیک" },
+        desc: { 
+            en: "150g extra‑lean ground Angus beef patty (90% lean) grilled over open flame, served on a toasted whole‑grain bun with lettuce, tomato, red onion, pickles.", 
+            fr: "Galette de bœuf Angus haché extra-maigre de 150 g grillée sur flamme nue, servie sur un petit pain de grains entiers grillé avec laitue, tomate, oignon rouge, cornichons.", 
+            fa: "۱۵۰ گرم گوشت چرخ‌کرده آنگوس کم‌چرب گریل شده روی شعله، سرو شده در نان غلات کامل برشته با کاهو، گوجه، پیاز قرمز و خیارشور." 
+        },
+        images: ["https://searafoodsme.com/wp-content/uploads/2022/04/Beef-Burger1080x720px.jpg"]
+    },
+    {
+        id: 28, category: "Burgers", price: 17.99, available: true, tempQty: 1,
+        name: { en: "Roda Burger", fr: "Burger Roda", fa: "رودا برگر" },
+        desc: { 
+            en: "Signature 170g lean Angus beef patty with house herb seasoning, on a multigrain bun with mixed greens, tomato, grilled onion, and 15ml light yogurt‑mustard sauce.", 
+            fr: "Galette de bœuf Angus maigre signature de 170 g avec assaisonnement maison aux herbes, sur pain multigrain avec mélange de laitues, tomate, oignon grillé et sauce légère yogourt-moutarde.", 
+            fa: "۱۷۰ گرم گوشت آنگوس کم‌چرب با ادویه مخصوص، در نان چندغله با سبزیجات، گوجه، پیاز کبابی و سس ماست و خردل." 
+        },
+        images: ["https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600"]
+    },
+    {
+        id: 29, category: "Burgers", price: 16.99, available: true, tempQty: 1,
+        name: { en: "Mushroom Burger", fr: "Burger aux Champignons", fa: "ماشروم برگر" },
+        desc: { 
+            en: "Grilled 90g Portobello mushroom cap layered with 90g lean beef or 100g veggie patty, topped with Swiss‑style reduced‑fat cheese, arugula, and tomato.", 
+            fr: "Chapeau de champignon Portobello grillé de 90 g étagé avec 90 g de bœuf maigre ou galette végétarienne, garni de fromage style suisse réduit en gras, roquette et tomate.", 
+            fa: "۹۰ گرم قارچ پورتوبلو کبابی همراه با ۹۰ گرم گوشت کم‌چرب (یا برگر گیاهی)، پنیر سوئیسی کم‌چرب، آرگولا و گوجه." 
+        },
+        images: ["https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?w=600"]
+    },
+    {
+        id: 30, category: "Burgers", price: 16.99, available: true, tempQty: 1,
+        name: { en: "Bacon Chicken Burger", fr: "Burger Poulet Bacon", fa: "چیکن برگر با بیکن" },
+        desc: { 
+            en: "130g grilled skinless chicken breast with one crisp turkey‑bacon slice, tomato, romaine, and 15ml light garlic aioli on a whole‑grain bun.", 
+            fr: "130 g de poitrine de poulet grillée sans peau avec une tranche de bacon de dinde croustillant, tomate, romaine et 15 ml d'aïoli léger à l'ail sur un petit pain de grains entiers.", 
+            fa: "۱۳۰ گرم سینه مرغ گریل شده بدون پوست، یک تکه بیکن بوقلمون برشته، گوجه، کاهو و سس سیر رژیمی در نان غلات کامل." 
+        },
+        images: ["https://images.unsplash.com/photo-1619250914677-70c8f553dc72?w=600"]
+    },
+    {
+        id: 31, category: "Burgers", price: 15.99, available: true, tempQty: 1,
+        name: { en: "Chicken Sandwich", fr: "Sandwich au Poulet", fa: "ساندویچ مرغ" },
+        desc: { 
+            en: "130g marinated grilled chicken breast with lettuce, tomato, cucumber, and 15ml light herb yogurt spread on a toasted whole‑grain bun.", 
+            fr: "130 g de poitrine de poulet grillée marinée avec laitue, tomate, concombre et 15 ml de tartinade légère au yogourt et herbes sur un petit pain de grains entiers grillé.", 
+            fa: "۱۳۰ گرم سینه مرغ گریل شده مزه‌دار با کاهو، گوجه، خیار و سس ماست سبزیجات روی نان غلات کامل برشته." 
+        },
+        images: ["https://images.unsplash.com/photo-1606755962773-d324e0a13086?w=600"]
+    },
+    {
+        id: 32, category: "Burgers", price: 15.99, available: true, tempQty: 1,
+        name: { en: "Turkey Burger", fr: "Burger de Dinde", fa: "برگر بوقلمون" },
+        desc: { 
+            en: "140g ground turkey breast patty or sliced roast turkey, served on a multigrain bun with spinach, tomato, cranberry‑mustard spread, and red onion.", 
+            fr: "Galette de poitrine de dinde hachée de 140 g ou dinde rôtie tranchée, servie sur un petit pain multigrain avec épinards, tomate, tartinade canneberge-moutarde et oignon rouge.", 
+            fa: "۱۴۰ گرم برگر سینه بوقلمون (یا اسلایس بوقلمون)، سرو شده در نان چندغله با اسفناج، گوجه، سس خردل و کرنبری و پیاز قرمز." 
+        },
+        images: ["https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?w=600"]
+    },
+    {
+        id: 33, category: "Burgers", price: 13.99, available: true, tempQty: 1,
+        name: { en: "Chicken Wrap", fr: "Wrap au Poulet", fa: "رپ مرغ" },
+        desc: { 
+            en: "100g grilled chicken strips, 60g mixed greens, tomato, cucumber, and shredded carrot in a warm whole‑wheat tortilla with 20ml light yogurt dressing.", 
+            fr: "100 g de lanières de poulet grillé, 60 g de mélange de laitues, tomate, concombre et carotte râpée dans une tortilla de blé entier chaude avec 20 ml de vinaigrette légère au yogourt.", 
+            fa: "۱۰۰ گرم فیله مرغ گریل شده، ۶۰ گرم سبزیجات، گوجه، خیار و هویج رنده شده در نان تورتیلای گندم کامل با سس ماست رژیمی." 
+        },
+        images: ["https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=600"]
+    },
+    {
+        id: 34, category: "Burgers", price: 14.99, available: true, tempQty: 1,
+        name: { en: "Beef Wrap", fr: "Wrap au Bœuf", fa: "رپ گوشت" },
+        desc: { 
+            en: "100g seared lean beef strips with sautéed peppers and onions, wrapped in a whole‑wheat tortilla with 40g lettuce, tomato, and 15ml salsa.", 
+            fr: "100 g de lanières de bœuf maigre poêlées avec poivrons et oignons sautés, enveloppées dans une tortilla de blé entier avec 40 g de laitue, tomate et 15 ml de salsa.", 
+            fa: "۱۰۰ گرم فیله گوشت کم‌چرب تفت داده شده با فلفل و پیاز، پیچیده شده در نان تورتیلای گندم کامل با کاهو، گوجه و سالسا." 
+        },
+        images: ["https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=600"]
+    },
+    {
+        id: 35, category: "Mains", price: 24.99, available: true, tempQty: 1,
+        name: { en: "Salmon Fajitas", fr: "Fajitas au Saumon", fa: "فاهیتا سالمون" },
+        desc: { 
+            en: "150g fresh Atlantic salmon, grilled with lime and spices, served sizzling with 80g bell peppers, 60g onion, warm whole‑wheat tortillas, and a side of pico de gallo.", 
+            fr: "150 g de saumon atlantique frais, grillé avec lime et épices, servi grésillant avec 80 g de poivrons, 60 g d'oignon, tortillas de blé entier chaudes et un côté de pico de gallo.", 
+            fa: "۱۵۰ گرم سالمون آتلانتیک کبابی با لیمو و ادویه، سرو شده به صورت داغ با ۸۰ گرم فلفل دلمه‌ای، ۶۰ گرم پیاز، نان تورتیلا و پیکو د گالو." 
+        },
+        images: ["https://images.unsplash.com/photo-1467003909585-2f8a7270028d?w=600"]
+    },
+    {
+        id: 36, category: "Mains", price: 26.99, available: true, tempQty: 1,
+        name: { en: "Steak Fajita", fr: "Fajita au Bifteck", fa: "فاهیتا استیک" },
+        desc: { 
+            en: "150g sliced lean flank steak seared and tossed with 80g peppers and 60g onions, served with whole‑wheat tortillas, salsa, and fresh cilantro.", 
+            fr: "150 g de bavette maigre tranchée poêlée et mélangée avec 80 g de poivrons et 60 g d'oignons, servie avec tortillas de blé entier, salsa et coriandre fraîche.", 
+            fa: "۱۵۰ گرم استیک دنده کم‌چرب برش خورده، تفت داده شده با ۸۰ گرم فلفل و ۶۰ گرم پیاز، سرو شده با نان تورتیلا، سالسا و گشنیز تازه." 
+        },
+        images: ["https://images.unsplash.com/photo-1534939561126-855b8675edd7?w=600"]
+    },
+    {
+        id: 37, category: "Mains", price: 21.99, available: true, tempQty: 1,
+        name: { en: "Chicken Fajita", fr: "Fajita au Poulet", fa: "فاهیتا مرغ" },
+        desc: { 
+            en: "150g marinated skinless chicken strips grilled with peppers and onions, served with whole‑wheat tortillas, salsa, and guacamole made from fresh avocado and lime.", 
+            fr: "150 g de lanières de poulet marinées sans peau grillées avec poivrons et oignons, servies avec tortillas de blé entier, salsa et guacamole fait d'avocat frais et lime.", 
+            fa: "۱۵۰ گرم فیله مرغ مزه‌دار شده کبابی با فلفل و پیاز، سرو شده با نان تورتیلا، سالسا و گواکامولی تازه." 
+        },
+        images: ["https://images.unsplash.com/photo-1534939561126-855b8675edd7?w=600"]
+    },
+    {
+        id: 38, category: "Mains", price: 19.99, available: true, tempQty: 1,
+        name: { en: "Shepherd’s Pie", fr: "Pâté Chinois", fa: "شپردز پای (پای چوپان)" },
+        desc: { 
+            en: "120g lean ground beef and turkey simmered with 80g peas, carrots, and corn in light gravy, topped with 140g olive‑oil mashed potatoes and baked until golden.", 
+            fr: "120 g de bœuf et dinde hachés maigres mijotés avec 80 g de pois, carottes et maïs dans une sauce légère, garnis de 140 g de purée de pommes de terre à l'huile d'olive et cuits jusqu'à ce qu'ils soient dorés.", 
+            fa: "۱۲۰ گرم گوشت چرخ‌کرده گوساله و بوقلمون، پخته شده با ۸۰ گرم نخودفرنگی، هویج و ذرت در سس غلیظ، با رویه ۱۴۰ گرم پوره سیب‌زمینی طلایی." 
+        },
+        images: ["https://images.unsplash.com/photo-1664992987820-80a5a3a79d39?w=600"]
+    },
+    {
+        id: 39, category: "Mains", price: 18.99, available: true, tempQty: 1,
+        name: { en: "Fish & Chips", fr: "Fish & Chips", fa: "فیش اند چیپس" },
+        desc: { 
+            en: "160g cod fillet lightly crumbed and oven‑baked, served with 160g oven fries, lemon, and a 30g side of light yogurt‑dill tartar sauce.", 
+            fr: "Filet de morue de 160 g légèrement pané et cuit au four, servi avec 160 g de frites au four, citron et un côté de 30 g de sauce tartare légère au yogourt et aneth.", 
+            fa: "۱۶۰ گرم فیله ماهی کاد سوخاری تنوری، سرو شده با ۱۶۰ گرم سیب‌زمینی تنوری، لیمو و سس تارتار رژیمی (ماست و شوید)." 
+        },
+        images: ["https://images.unsplash.com/photo-1579208575657-c5296846081d?w=600"]
+    },
+    {
+        id: 40, category: "Mains", price: 16.99, available: true, tempQty: 1,
+        name: { en: "Pasta Alfredo", fr: "Pâtes Alfredo", fa: "پاستا آلفردو" },
+        desc: { 
+            en: "80g whole‑wheat fettuccine in a light Alfredo sauce made with skim milk, parmesan, and puréed cauliflower, finished with parsley and 60g steamed broccoli.", 
+            fr: "80 g de fettuccine de blé entier dans une sauce Alfredo légère faite de lait écrémé, parmesan et purée de chou-fleur, finie avec persil et 60 g de brocoli vapeur.", 
+            fa: "۸۰ گرم پاستا فتوچینی گندم کامل در سس آلفردو سبک (تهیه شده با شیر کم‌چرب، پارمزان و پوره گل‌کلم)، به همراه ۶۰ گرم بروکلی بخارپز." 
+        },
+        images: ["https://images.unsplash.com/photo-1645112411341-6c4fd023714a?w=600"]
+    },
+    {
+        id: 41, category: "Mains", price: 15.99, available: true, tempQty: 1,
+        name: { en: "Pasta Fettuccine", fr: "Fettuccine", fa: "پاستا فتوچینی (قرمز)" },
+        desc: { 
+            en: "90g whole‑wheat fettuccine tossed in 70ml tomato basil sauce, with 80g mixed vegetables and 20g shaved parmesan.", 
+            fr: "90 g de fettuccine de blé entier mélangées dans 70 ml de sauce tomate basilic, avec 80 g de légumes mélangés et 20 g de parmesan râpé.", 
+            fa: "۹۰ گرم پاستا فتوچینی گندم کامل در ۷۰ میلی‌لیتر سس گوجه و ریحان، به همراه ۸۰ گرم سبزیجات مخلوط و ۲۰ گرم پنیر پارمزان." 
+        },
+        images: ["https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=600"]
+    },
+    {
+        id: 42, category: "Mains", price: 14.99, available: true, tempQty: 1,
+        name: { en: "Mac & Cheese", fr: "Macaroni au Fromage", fa: "ماکارونی و پنیر (مک اند چیز)" },
+        desc: { 
+            en: "80g whole‑wheat macaroni baked in a creamy sauce of skim milk, blended cottage cheese, and reduced‑fat cheddar, topped with 10g whole‑grain crumb.", 
+            fr: "80 g de macaroni de blé entier cuits dans une sauce crémeuse de lait écrémé, fromage cottage mélangé et cheddar réduit en gras, garnis de 10 g de chapelure de grains entiers.", 
+            fa: "۸۰ گرم ماکارونی گندم کامل پخته شده در سس خامه ای شیر کم‌چرب، پنیر کاتیج و چدار کم‌چرب، با رویه سوخاری غلات کامل." 
+        },
+        images: ["https://images.unsplash.com/photo-1543339308-43e59d6b73a6?w=600"]
+    },
+    {
+        id: 43, category: "Mains", price: 15.99, available: true, tempQty: 1,
+        name: { en: "Chicken Fingers", fr: "Doigts de Poulet", fa: "فیله سوخاری (چیکن فینگر)" },
+        desc: { 
+            en: "Three 35g strips of marinated chicken breast coated in whole‑wheat crumbs, oven‑baked and served with veggie sticks and 30ml honey‑mustard yogurt dip.", 
+            fr: "Trois lanières de 35 g de poitrine de poulet marinée enrobées de chapelure de blé entier, cuites au four et servies avec bâtonnets de légumes et 30 ml de trempette yogourt miel-moutarde.", 
+            fa: "سه تکه ۳۵ گرمی فیله مرغ مزه‌دار شده با روکش سوخاری گندم کامل، تنوری شده، سرو شده با سبزیجات و دیپ ماست و خردل عسلی." 
+        },
+        images: ["https://images.unsplash.com/photo-1562967960-f0d2383cf639?w=600"]
+    },
+    {
+        id: 44, category: "Mains", price: 19.99, available: true, tempQty: 1,
+        name: { en: "Shrimp & Vegetable", fr: "Crevettes et Légumes", fa: "میگو و سبزیجات" },
+        desc: { 
+            en: "120g sautéed shrimp tossed with 150g broccoli, peppers, and snap peas in a light garlic‑ginger sauce, served over 100g steamed brown rice.", 
+            fr: "120 g de crevettes sautées mélangées avec 150 g de brocoli, poivrons et pois mange-tout dans une sauce légère ail-gingembre, servies sur 100 g de riz brun vapeur.", 
+            fa: "۱۲۰ گرم میگو تفت داده شده با ۱۵۰ گرم بروکلی، فلفل و نخود فرنگی در سس سیر و زنجبیل سبک، سرو شده روی ۱۰۰ گرم برنج قهوه‌ای." 
+        },
+        images: ["https://images.unsplash.com/photo-1559742811-822873691df8?w=600"]
+    },
+    {
+        id: 45, category: "Mains", price: 20.99, available: true, tempQty: 1,
+        name: { en: "Breaded Shrimp", fr: "Crevettes Panées", fa: "میگو سوخاری" },
+        desc: { 
+            en: "120g shrimp coated in panko and baked until crisp, served with lemon and 30ml light chili‑lime yogurt sauce.", 
+            fr: "120 g de crevettes enrobées de panko et cuites jusqu'à ce qu'elles soient croustillantes, servies avec citron et 30 ml de sauce yogourt chili-lime légère.", 
+            fa: "۱۲۰ گرم میگو با روکش پانکو، تنوری و ترد شده، سرو شده با لیمو و سس ماست و لیمو فلفلی." 
+        },
+        images: ["https://images.unsplash.com/photo-1623961990059-28356e226a77?w=600"]
+    },
+    {
+        id: 46, category: "Mains", price: 21.99, available: true, tempQty: 1,
+        name: { en: "Coconut Shrimp", fr: "Crevettes à la Noix de Coco", fa: "میگو نارگیلی" },
+        desc: { 
+            en: "120g shrimp crusted in unsweetened shredded coconut and panko, oven‑baked and served with 30ml house pineapple‑lime dip.", 
+            fr: "120 g de crevettes en croûte de noix de coco râpée non sucrée et panko, cuites au four et servies avec 30 ml de trempette maison ananas-lime.", 
+            fa: "۱۲۰ گرم میگو با روکش پودر نارگیل و پانکو، تنوری شده و سرو شده با دیپ آناناس و لیمو." 
+        },
+        images: ["https://images.unsplash.com/photo-1616070653633-91d904739506?w=600"]
+    },
+    {
+        id: 47, category: "Mains", price: 22.99, available: true, tempQty: 1,
+        name: { en: "Sport Plate", fr: "Assiette Sportive", fa: "بشقاب ورزشکاری" },
+        desc: { 
+            en: "High‑energy platter with 80g grilled chicken strips, 80g baked wings, 80g oven fries, and a 120g side garden salad with light vinaigrette.", 
+            fr: "Plateau haute énergie avec 80 g de lanières de poulet grillé, 80 g d'ailes cuites au four, 80 g de frites au four et une salade jardinière de 120 g avec vinaigrette légère.", 
+            fa: "بشقاب پرانرژی شامل ۸۰ گرم فیله مرغ، ۸۰ گرم بال تنوری، ۸۰ گرم سیب‌زمینی تنوری و ۱۲۰ گرم سالاد فصل با سس رژیمی." 
+        },
+        images: ["https://images.unsplash.com/photo-1603073163308-9654c3fb70b9?w=600"]
+    }
+]
+
+const translations = {
+    en: {
+        menu: "Menu", cart: "Cart", track: "Track", ourMenu: "Our Menu",
+        addToCart: "Add to Cart", soldOut: "Sold Out", yourOrder: "Your Order",
+        emptyCart: "Your cart is currently empty.", backToMenu: "Back to Menu",
+        total: "Total", submitOrder: "Submit Order", note: "Note",
+        emailPlaceholder: "Email for receipt (optional)", notePlaceholder: "Allergies or Special Requests?",
+        trackTitle: "Track Order", enterOrderNum: "Enter Order #", status: "Status",
+        recentOrders: "My Recent Orders"
+    },
+    fr: {
+        menu: "Menu", cart: "Panier", track: "Suivre", ourMenu: "Notre Menu",
+        addToCart: "Ajouter", soldOut: "Épuisé", yourOrder: "Votre Commande",
+        emptyCart: "Votre panier est vide.", backToMenu: "Retour au Menu",
+        total: "Total", submitOrder: "Commander", note: "Note",
+        emailPlaceholder: "Email pour le reçu (optionnel)", notePlaceholder: "Allergies ou demandes spéciales?",
+        trackTitle: "Suivre la commande", enterOrderNum: "Numéro de commande #", status: "Statut",
+        recentOrders: "Mes commandes récentes"
+    },
+    fa: {
+        menu: "منو", cart: "اقلام انتخابی", track: "وضعیت سفارش", ourMenu: "منوی ما",
+        addToCart: "افزودن به سبد خرید", soldOut: "تمام شده", yourOrder: "سفارش شما",
+        emptyCart: "موردی انتخاب نشده است!", backToMenu: "بازگشت به منو",
+        total: "جمع کل", submitOrder: "ثبت سفارش", note: "توضیحات",
+        emailPlaceholder: "ایمیل برای رسید (اختیاری)", notePlaceholder: "آلرژی یا درخواست ویژه‌ی شما",
+        trackTitle: "ردیابی سفارش", enterOrderNum: "شماره سفارش #", status: "وضعیت سفارش",
+        recentOrders: "سفارش‌های اخیر من"
+    }
+};
+
+createApp({
+    data() {
+        return {
+            lang: 'en', // default
+            currentPage: 'menu',
+            selectedCategory: 'Salads',
+            menu: [],
+            cart: [],
+            customerEmail: '',
+            customerNote: '',
+            
+            // Tracking
+            trackId: '',
+            trackStatus: null,
+            myHistory: [],
+            allOrders: [],
+
+            // Admin
+            isAdmin: false,
+            adminPass: '',
+            adminTab: 'orders'
+        }
+    },
+    computed: {
+        t() { return translations[this.lang]; },
+        categories() { return [...new Set(this.menu.map(i => i.category))]; },
+        filteredItems() { return this.menu.filter(i => i.category === this.selectedCategory); },
+        cartCount() { return this.cart.reduce((acc, i) => acc + i.qty, 0); },
+        cartTotal() { return this.cart.reduce((acc, i) => acc + i.price * i.qty, 0).toFixed(2); }
+    },
+    created() {
+        // 1. Language Detection
+        const savedLang = localStorage.getItem('roda_lang');
+        const browserLang = navigator.language.startsWith('fr') ? 'fr' : 'en';
+        this.lang = savedLang || browserLang;
+
+        // 2. Load Data
+        const storedMenu = localStorage.getItem('roda_menu');
+        this.menu = storedMenu ? JSON.parse(storedMenu) : initialMenu;
+        
+        this.allOrders = JSON.parse(localStorage.getItem('roda_orders') || '[]');
+        this.myHistory = JSON.parse(localStorage.getItem('roda_history') || '[]');
+        
+        // EmailJS Init
+        try { emailjs.init("FG_Aw6_G8kUJiDRqJ"); } catch(e){}
+    },
+    methods: {
+        setLang(l) {
+            this.lang = l;
+            localStorage.setItem('roda_lang', l);
+        },
+        addToCart(item) {
+            this.cart.push({
+                ...item,
+                qty: item.tempQty,
+                image: item.images[0],
+                note: this.customerNote
+            });
+            item.tempQty = 1;
+            alert(`${item.name[this.lang]} added!`);
+        },
+        removeFromCart(index) {
+            this.cart.splice(index, 1);
+        },
+        submitOrder() {
+            if(!this.cart.length) return;
+            const orderId = Math.floor(Math.random() * 9000) + 1000;
+            const newOrder = {
+                id: orderId,
+                items: JSON.parse(JSON.stringify(this.cart)),
+                total: this.cartTotal,
+                status: 'Submitted',
+                email: this.customerEmail,
+                custNote: this.customerNote,
+                time: new Date().toLocaleString()
+            };
+            
+            // Save Global & Local
+            this.allOrders.push(newOrder);
+            this.myHistory.push(newOrder);
+            localStorage.setItem('roda_orders', JSON.stringify(this.allOrders));
+            localStorage.setItem('roda_history', JSON.stringify(this.myHistory));
+
+// Prepare Email Data
+    if(this.customerEmail) {
+        // Build items list for email
+        const itemsList = this.cart.map(item => {
+            return `
+                <tr style="vertical-align: top; border-bottom: 1px solid #eee;">
+                    <td style="padding: 16px 8px 16px 4px; width: 80px;">
+                        <img style="width: 70px; height: 70px; object-fit: cover; border-radius: 8px; border: 2px solid #C4A052;" 
+                             src="${item.image}" alt="${item.name[this.lang]}" />
+                    </td>
+                    <td style="padding: 16px 8px; width: 100%;">
+                        <div style="font-weight: 600; color: #000; font-size: 15px;">${item.name.en}</div>
+                        <div style="font-size: 13px; color: #666; padding-top: 4px;">Quantity: ${item.qty}</div>
+                        ${item.note ? `<div style="font-size: 12px; color: #C4A052; padding-top: 4px; font-style: italic;">Note: ${item.note}</div>` : ''}
+                    </td>
+                    <td style="padding: 16px 8px 16px 0; white-space: nowrap; text-align: right; vertical-align: middle;">
+                        <strong style="font-size: 16px; color: #C4A052;">$${(item.price * item.qty).toFixed(2)}</strong>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+
+        const totalItems = this.cart.reduce((acc, item) => acc + item.qty, 0);
+
+        const emailParams = {
+            to_email: this.customerEmail,
+            order_id: orderId,
+            total_items: totalItems,
+            order_total: this.cartTotal,
+            customer_note: this.customerNote || 'No special requests',
+            order_time: newOrder.time,
+            items_html: itemsList,
+            restaurant_name: "Roda Bar & Grill",
+            restaurant_address: "123 Main Street, Your City",
+            restaurant_phone: "(555) 123-4567"
+        };
+
+        try { 
+            emailjs.send("service_ob2vx0c", "template_ealmonf", emailParams)
+                .then(() => console.log("Receipt sent successfully"))
+                .catch(err => console.error("Email error:", err));
+        } catch(e) {
+            console.error("EmailJS error:", e);
+        }
+    }
+
+    alert(`Order #${orderId} submitted! ${this.customerEmail ? 'Check your email for confirmation.' : ''}`);
+    this.cart = [];
+    this.customerNote = '';
+    this.customerEmail = '';
+    this.currentPage = 'track';
+    this.trackId = orderId;
+    this.trackOrder();
+},
+        trackOrder() {
+            const o = this.allOrders.find(x => x.id == this.trackId);
+            this.trackStatus = o ? o.status : "Order not found";
+        },
+        
+        // Admin Logic
+        loginAdmin() {
+            if(hash(this.adminPass) === '613') this.isAdmin = true;
+            else alert("Wrong password");
+        },
+        saveOrders() {
+            localStorage.setItem('roda_orders', JSON.stringify(this.allOrders));
+        },
+        updateImages(item, event) {
+            item.images = event.target.value.split(',').map(s=>s.trim());
+        },
+        addNewItem() {
+            this.menu.push({
+                id: Date.now(),
+                category: "New",
+                price: 0,
+                available: false,
+                tempQty: 1,
+                name: { en: "New Item", fr: "Nouvel article" },
+                desc: { en: "Description", fr: "Description" },
+                images: ["https://via.placeholder.com/300"]
+            });
+        },
+        deleteItem(index) {
+            if(confirm("Delete item?")) {
+                this.menu.splice(index, 1);
+                this.saveMenu();
+            }
+        },
+        saveMenu() {
+            localStorage.setItem('roda_menu', JSON.stringify(this.menu));
+            alert("Menu updated!");
+        }
+    }
+}).mount('#app');
+</script>
+</body>
+</html>
