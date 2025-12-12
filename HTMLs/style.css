@@ -1,0 +1,285 @@
+/* style.css – all your beautiful Roda Bar styling */
+:root {
+            --gold: #d4af37;
+            --dark-overlay: rgba(10, 10, 10, 0.92);
+            --card-bg: rgba(26, 26, 26, 0.95);
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') no-repeat center center fixed;
+            background-size: cover;
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        .app-overlay {
+            background-color: var(--dark-overlay);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .pulse-hover:hover {
+            animation: pulse 0.5s infinite alternate;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1)
+            }
+
+            50% {
+                transform: scale(1.05)
+            }
+        }
+
+        /* Navbar */
+        .navbar {
+            background-color: rgba(0, 0, 0, 0.95);
+            border-bottom: 1px solid #333;
+            padding: 10px 0;
+            backdrop-filter: blur(5px);
+        }
+
+        .navbar-brand {
+            color: var(--gold) !important;
+            font-family: 'Great Vibes', cursive;
+            font-size: 2.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-svg {
+            fill: var(--gold);
+            height: 40px;
+            width: 40px;
+        }
+
+        .nav-link {
+            color: var(--gold) !important;
+            transition: 0.3s;
+            font-weight: 500;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: #fff !important;
+            text-shadow: 0 0 10px var(--gold);
+        }
+
+        /* General UI */
+        .text-gold {
+            color: var(--gold) !important;
+        }
+
+        .btn-gold {
+            background: linear-gradient(45deg, #d4af37, #b8962e);
+            color: #000;
+            font-weight: bold;
+            border: none;
+            transition: all 0.3s;
+        }
+
+        .btn-gold:hover {
+            background: #ffd700;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .page-section {
+            padding-top: 100px;
+            padding-bottom: 50px;
+            flex: 1;
+        }
+
+        /* Menu Cards */
+        .item-card {
+            background: var(--card-bg);
+            border: 1px solid #333;
+            border-radius: 12px;
+            overflow: hidden;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            transition: 0.3s;
+        }
+
+        .item-card:hover {
+            border-color: var(--gold);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.15);
+            transform: translateY(-5px);
+        }
+
+        .card-img-wrapper {
+            height: 240px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .card-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Category Scroller */
+        .cat-scroller {
+            position: sticky;
+            top: 80px;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 15px 0;
+            overflow-x: auto;
+            white-space: nowrap;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #333;
+        }
+
+        .cat-btn {
+            background: transparent;
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            padding: 8px 20px;
+            border-radius: 50px;
+            margin-right: 10px;
+            transition: 0.3s;
+        }
+
+        .cat-btn.active,
+        .cat-btn:hover {
+            background: var(--gold);
+            color: #000;
+            box-shadow: 0 0 10px var(--gold);
+        }
+
+        /* Footer */
+        .footer {
+            background: rgba(0, 0, 0, 0.95);
+            border-top: 1px solid #333;
+            padding: 40px 0 20px;
+            font-size: 0.9rem;
+        }
+
+        .footer h5 {
+            color: var(--gold);
+            font-family: 'Great Vibes', cursive;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+
+        .footer a {
+            color: #ccc;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .footer a:hover {
+            color: var(--gold);
+        }
+
+        /* --- ADMIN & FORM STYLES (FIXED) --- */
+        .admin-panel {
+            background: #222;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #444;
+        }
+
+        .form-control,
+        .form-select {
+            background-color: #000;
+            border: 1px solid #444;
+            color: #fff;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            background-color: #111;
+            color: #fff;
+            border-color: var(--gold);
+            box-shadow: none;
+        }
+
+        /* Fix for Labels Visibility */
+        label,
+        .form-label,
+        .small.text-muted {
+            color: #bbb !important;
+            font-weight: 500;
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        /* Fix for Tab Visibility */
+        .nav-tabs {
+            border-bottom: 1px solid #444;
+        }
+
+        .nav-tabs .nav-link {
+            color: #888;
+            border: 1px solid transparent;
+        }
+
+        .nav-tabs .nav-link:hover {
+            color: #ddd;
+            border-color: #444;
+        }
+
+        .nav-tabs .nav-link.active {
+            background-color: var(--gold);
+            color: #000;
+            border-color: var(--gold);
+            font-weight: bold;
+        }
+
+        .placeholder-gold::placeholder {
+            color: #d4af37 !important;
+            opacity: 0.7;
+        }
+
+        .border-gold {
+            border-color: var(--gold) !important;
+        }
+
+        .bg-black {
+            background-color: #000 !important;
+        }
+
+        .lang-flag {
+            cursor: pointer;
+            opacity: 0.5;
+            transition: 0.3s;
+            font-size: 1.2rem;
+            filter: grayscale(80%);
+        }
+
+        .lang-flag.active {
+            opacity: 1;
+            transform: scale(1.2);
+            filter: grayscale(0%);
+        }
+
+        .lang-flag:hover {
+            opacity: 1;
+        }

@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roda Bar & Restaurant | Thornhill</title>
+    <meta name="description" content="Roda Bar & Restaurant - 7359 Yonge St, Thornhill.">
+    <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiB2aWV3Qm94PSIwIDAgMjAwIDIwMCI+PGNpcmNsZSBjeD0iMTAwIiBjeT0iMTAwIiByPSI5OCIgZmlsbD0iIzAwMDAwMCIvPjxwYXRoIGQ9Ik0gNDUgMzUgQSA3NSA3NSAwIDAgMCA0NSAxNjUiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0M0QTA1MiIgc3Ryb2tlLXdpZHRoPSIyLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjx0ZXh0IHg9IjEwMCIgeT0iMTA1IiBmb250LWZhbWlseT0iJ0JydXNoIFNjcmlwdCBNVCcsIGN1cnNpdmUiIGZvbnQtc2l6ZT0iNTIiIGZpbGw9IiNDNEEwNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPlJvZGE8L3RleHQ+PHRleHQgeD0iMTMwIiB5PSIxNDAiIGZvbnQtZmFtaWx5PSInQnJ1c2ggU2NyaXB0IE1UJywgY3Vyc2l2ZSIgZm9udC1zaXplPSIyOCIgZmlsbD0iI0M0QTA1MiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+YmFyPC90ZXh0Pjwvc3ZnPg==">
+       
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- EmailJS -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+    <style>
+        
+    </style>
+</head>
+<body>
+
+<div id="app" class="app-overlay">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand pulse-hover" href="#" @click.prevent="currentPage='menu'">
+                <svg class="logo-svg" viewBox="0 0 24 24">
+                    <path d="M11 9H9V2H7v7H5V2H3v7c0 2.12 1.66 3.84 3.75 3.97V22h2.5v-9.03C11.34 12.84 13 11.12 13 9V2h-2v7zm5-3v8h2.5v8H21V2c-2.76 0-5 2.24-5 4z"/>
+                </svg>
+                Roda Bar
+            </a>
+            
+            <div class="d-flex align-items-center gap-3 order-lg-last ms-3">
+                <!-- Role Indicator -->
+                <span v-if="currentRole !== 'customer'" class="role-badge" :class="'role-' + currentRole">
+                    {{ currentRole }}
+                </span>
+                
+                <div class="d-flex gap-2">
+                    <span class="lang-flag" :class="{active: lang==='en'}" @click="setLang('en')" title="English">🇺🇸</span>
+                    <span class="lang-flag" :class="{active: lang==='fr'}" @click="setLang('fr')" title="Français">🇫🇷</span>
+                    <span class="lang-flag" :class="{active: lang==='fa'}" @click="setLang('fa')" title="Farsi">🇮🇷</span>                    
+                </div>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto text-uppercase small fw-bold">
+                    <li class="nav-item"><a class="nav-link" :class="{active: currentPage==='menu'}" href="#" @click="currentPage='menu'">{{ t.menu }}</a></li>
+                    <li class="nav-item"><a class="nav-link" :class="{active: currentPage==='cart'}" href="#" @click="currentPage='cart'">{{ t.cart }} ({{ cartCount }})</a></li>
+                    <li class="nav-item"><a class="nav-link" :class="{active: currentPage==='track'}" href="#" @click="currentPage='track'">{{ t.track }}</a></li>
+                    <li class="nav-item"><a class="nav-link" :class="{active: currentPage==='admin'}" href="#" @click="currentPage='admin'">{{ t.adminP }}</a></li>
+                    <li class="nav-item" v-if="currentRole !== 'customer'">
+                        <a class="nav-link text-danger" href="#" @click="logout">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ====== FLOATING CART BUTTON (MOBILE) ====== -->
+    <button class="floating-cart" 
+            :class="{ bounce: cartBounce }" 
+            @click="currentPage='cart'" 
+            v-show="currentPage !== 'cart' && cartCount > 0">
+        <i class="bi bi-cart3"></i>
+        <span class="badge">{{ cartCount }}</span>
+    </button>
+
+    <!-- MENU PAGE -->
+    <div v-if="currentPage === 'menu'" class="fade-in">
+        <div class="cat-scroller">
+            <div class="container text-center">
+                <button v-for="cat in activeCategories" 
+                        class="cat-btn" 
+                        @click="scrollToCategory(cat)">
+                    {{ cat }}
+                </button>
+            </div>
+        </div>
+
+        <div class="container pb-5">
+            <h2 class="text-center mb-5 text-gold" style="font-family:'Great Vibes'; font-size: 3rem;">{{ t.ourMenu }}</h2>
+            
+            <div v-for="cat in activeCategories" :key="cat" :id="'cat-'+cat" class="mb-5">
+                <h3 class="text-gold border-bottom border-secondary pb-2 mb-4">{{ cat }}</h3>
+                
+                <div class="row g-4">
+                    <div class="col-md-6 col-lg-4" v-for="item in getItemsByCategory(cat)" :key="item.id">
+                        <div class="item-card">
+                            <div :id="'carousel-'+item.id" class="carousel slide card-img-wrapper" data-bs-ride="carousel">
+                                <div class="carousel-inner h-100">
+                                    <div v-for="(img, index) in item.images" :class="['carousel-item', 'h-100', {active: index===0}]">
+                                        <img :src="img" :alt="item.name[lang]">
+                                    </div>
+                                </div>
+                                <button v-if="item.images.length > 1" class="carousel-control-prev" type="button" :data-bs-target="'#carousel-'+item.id" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon"></span>
+                                </button>
+                                <button v-if="item.images.length > 1" class="carousel-control-next" type="button" :data-bs-target="'#carousel-'+item.id" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon"></span>
+                                </button>
+                            </div>
+
+                            <div class="p-3 d-flex flex-column flex-grow-1">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <h5 class="mb-1">{{ item.name[lang] }}</h5>
+                                    <span class="text-gold fw-bold">${{ item.price.toFixed(2) }}</span>
+                                </div>
+                                <p class="small text-secondary flex-grow-1">{{ item.desc[lang] }}</p>
+                                
+                                <div v-if="item.available" class="mt-auto">
+                                    <div class="input-group">
+                                        <input type="number" class="form-control text-center bg-dark text-white border-secondary" v-model.number="item.tempQty" min="1" max="10">
+                                        <button class="btn btn-gold w-50" @click="addToCart(item)">{{ t.addToCart }}</button>
+                                    </div>
+                                </div>
+                                <div v-else class="mt-auto text-danger fw-bold text-center border border-danger p-2 rounded">
+                                    {{ t.soldOut }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CART PAGE (Customer View) -->
+    <div v-if="currentPage === 'cart'" class="container page-section fade-in">
+        <h2 class="text-center mb-4 text-gold">{{ t.yourOrder }}</h2>
+        
+        <div v-if="cart.length === 0" class="text-center py-5">
+            <p class="fs-4 text-muted">{{ t.emptyCart }}</p>
+            <button class="btn btn-gold mt-3" @click="currentPage='menu'">{{ t.backToMenu }}</button>
+        </div>
+        
+        <div v-else class="row justify-content-center">
+            <div class="col-lg-8">
+                <!-- Cart Items -->
+                <ul class="list-group mb-4">
+                    <li v-for="(item, index) in cart" class="list-group-item bg-dark text-white border-secondary d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center gap-3">
+                            <img :src="item.image" style="width: 50px; height: 50px; object-fit: cover; border-radius: 6px;">
+                            <div>
+                                <h6 class="mb-0">{{ item.name[lang] }} <span class="text-gold">x{{ item.qty }}</span></h6>
+                                <small class="text-muted" v-if="item.note">{{ t.note }}: {{ item.note }}</small>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <div class="fw-bold">${{ (item.price * item.qty).toFixed(2) }}</div>
+                            <button class="btn btn-sm btn-outline-danger mt-1 py-0" @click="removeFromCart(index)">x</button>
+                        </div>
+                    </li>
+                </ul>
+                
+                <!-- Checkout Form -->
+                <div class="admin-panel text-center">
+                    <h3 class="mb-3">{{ t.total }}: <span class="text-gold">${{ cartTotal }}</span></h3>
+                    
+                    <!-- Table Number -->
+                    <div class="mb-3">
+                        <label class="form-label">Optional info to Add</label>
+                        <input type="text" class="form-control placeholder-gold" v-model="tableNumber" placeholder="e.g., Table 5">
+                    </div>
+                    
+                    <input type="email" class="form-control mb-2 placeholder-gold" v-model="customerEmail" :placeholder="t.emailPlaceholder">
+                    <textarea class="form-control mb-3 placeholder-gold" v-model="customerNote" :placeholder="t.notePlaceholder"></textarea>
+                    
+                    <!-- Info Box -->
+                    <div class="alert alert-info text-start small mb-3">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <strong>Note:</strong> Your order will be sent to a waiter for approval. You'll receive your order number to track the status.
+                    </div>
+                    
+                    <button class="btn btn-gold btn-lg w-100 pulse-hover" @click="submitOrder">
+                        <i class="bi bi-send me-2"></i>{{ t.submitOrder }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TRACK PAGE (Customer View) -->
+    <div v-if="currentPage === 'track'" class="container page-section fade-in">
+        <h2 class="text-center text-gold mb-4">{{ t.trackTitle }}</h2>
+        
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <!-- Search Order -->
+                <div class="input-group mb-4">
+                    <input type="text" class="form-control" v-model="trackId" :placeholder="t.enterOrderNum">
+                    <button class="btn btn-gold" @click="trackOrder">{{ t.track }}</button>
+                </div>
+                
+                <!-- Order Details (if found) -->
+                <div v-if="trackedOrder" class="customer-order-view mb-4">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h4 class="text-gold mb-1">Order #{{ trackedOrder.id }}</h4>
+                            <small class="text-muted">{{ trackedOrder.time }}</small>
+                            <div v-if="trackedOrder.tableNumber" class="mt-1">
+                                <span class="badge bg-secondary">Table {{ trackedOrder.tableNumber }}</span>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <span class="status-badge" :class="'status-' + trackedOrder.status.toLowerCase().replace(' ', '-')">
+                                {{ trackedOrder.status }}
+                            </span>
+                            <div class="mt-2">
+                                <span class="payment-badge" :class="trackedOrder.paymentStatus === 'Paid' ? 'payment-paid' : 'payment-unpaid'">
+                                    {{ trackedOrder.paymentStatus || 'Unpaid' }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Order Items -->
+                    <div class="mb-3">
+                        <h6 class="text-muted mb-2">Items:</h6>
+                        <div v-for="item in trackedOrder.items" class="d-flex justify-content-between py-2 border-bottom border-secondary">
+                            <span>{{ item.qty }}x {{ item.name[lang] }}</span>
+                            <span class="text-gold">${{ (item.price * item.qty).toFixed(2) }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between py-2 fw-bold">
+                            <span>Total</span>
+                            <span class="text-gold">${{ trackedOrder.total }}</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Order Timeline -->
+                    <div class="mt-4">
+                        <h6 class="text-muted mb-3">Order Progress:</h6>
+                        <div class="order-timeline">
+                            <div class="timeline-item" :class="getTimelineClass('Pending', trackedOrder.status)">
+                                <strong>Pending Approval</strong>
+                                <p class="small text-muted mb-0">Waiting for waiter approval</p>
+                            </div>
+                            <div class="timeline-item" :class="getTimelineClass('Approved', trackedOrder.status)">
+                                <strong>Approved</strong>
+                                <p class="small text-muted mb-0">Order confirmed by staff</p>
+                            </div>
+                            <div class="timeline-item" :class="getTimelineClass('Cooking', trackedOrder.status)">
+                                <strong>Cooking</strong>
+                                <p class="small text-muted mb-0">Being prepared in kitchen</p>
+                            </div>
+                            <div class="timeline-item" :class="getTimelineClass('Ready', trackedOrder.status)">
+                                <strong>Ready</strong>
+                                <p class="small text-muted mb-0">Ready for pickup/serving</p>
+                            </div>
+                            <div class="timeline-item" :class="getTimelineClass('Served', trackedOrder.status)">
+                                <strong>Served</strong>
+                                <p class="small text-muted mb-0">Delivered to table</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Customer Comments Section -->
+                    <div class="mt-4 pt-3 border-top border-secondary">
+                        <h6 class="text-muted mb-2">Add a Comment:</h6>
+                        <div class="input-group">
+                            <input type="text" class="form-control" v-model="newComment" placeholder="Any questions or requests...">
+                            <button class="btn btn-gold" @click="addCustomerComment">Send</button>
+                        </div>
+                        
+                        <!-- Comments List -->
+                        <div v-if="trackedOrder.comments && trackedOrder.comments.length" class="mt-3">
+                            <div v-for="comment in trackedOrder.comments" class="p-2 mb-2 rounded" 
+                                 :class="comment.from === 'customer' ? 'bg-dark' : 'bg-secondary'">
+                                <small class="text-gold">{{ comment.from === 'customer' ? 'You' : 'Staff' }} - {{ comment.time }}</small>
+                                <p class="mb-0 small">{{ comment.text }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div v-else-if="trackStatus" class="alert alert-warning text-center">
+                    {{ trackStatus }}
+                </div>
+                
+                <!-- Recent Orders History -->
+                <h4 class="mt-5 text-muted">{{ t.recentOrders }}</h4>
+                <div class="list-group">
+                    <button v-for="order in myHistory.slice().reverse().slice(0, 5)" 
+                            class="list-group-item list-group-item-action bg-dark text-white border-secondary d-flex justify-content-between align-items-center" 
+                            @click="trackId = order.id; trackOrder()">
+                        <span>
+                            #{{ order.id }} 
+                            <span v-if="order.tableNumber" class="text-muted">(Table {{ order.tableNumber }})</span>
+                        </span>
+                        <span>
+                            <span class="status-badge me-2" :class="'status-' + order.status.toLowerCase().replace(' ', '-')">{{ order.status }}</span>
+                            <span class="text-gold">${{ order.total }}</span>
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN PAGE (Role-Based) -->
+    <div v-if="currentPage === 'admin'" class="container page-section fade-in">
+        <h2 class="text-gold mb-4">
+            <span v-if="currentRole === 'customer'">Staff Login</span>
+            <span v-else>{{ currentRole.charAt(0).toUpperCase() + currentRole.slice(1) }} Dashboard</span>
+        </h2>
+        
+        <!-- Login Panel -->
+        <div v-if="currentRole === 'customer'" class="row justify-content-center">
+            <div class="col-md-4">
+                <div class="admin-panel text-center">
+                    <h5 class="mb-3 text-white">Secure Login</h5>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Select Role</label>
+                        <select class="form-select" v-model="loginRole">
+                            <option value="waiter">Waiter</option>
+                            <option value="staff">Staff</option>
+                            <option value="manager">Manager</option>
+                        </select>
+                    </div>
+                    
+                    <input type="password" class="form-control mb-3" v-model="adminPass" placeholder="Enter PIN/Password">
+                    <button class="btn btn-gold w-100" @click="loginAdmin">Login</button>
+                    
+                    <div class="mt-3 small text-muted">
+                        <p class="mb-1">Demo PINs:</p>
+                        <p class="mb-0">Waiter: 1111 | Staff: 2222 | Manager: 3333</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard (Logged In) -->
+        <div v-else>
+            <ul class="nav nav-tabs mb-4">
+                <li class="nav-item">
+                    <a class="nav-link" :class="{active: adminTab==='orders'}" href="#" @click="adminTab='orders'">
+                        Orders
+                        <span v-if="pendingOrdersCount > 0" class="badge bg-warning text-dark ms-1">{{ pendingOrdersCount }}</span>
+                    </a>
+                </li>
+                <li class="nav-item" v-if="currentRole === 'manager'">
+                    <a class="nav-link" :class="{active: adminTab==='cats'}" href="#" @click="adminTab='cats'">Categories</a>
+                </li>
+                <li class="nav-item" v-if="currentRole === 'manager'">
+                    <a class="nav-link" :class="{active: adminTab==='menu'}" href="#" @click="adminTab='menu'">Menu Manager</a>
+                </li>
+                <li class="nav-item" v-if="currentRole === 'manager'">
+                    <a class="nav-link" :class="{active: adminTab==='history'}" href="#" @click="adminTab='history'">Order History</a>
+                </li>
+            </ul>
+
+            <!-- Orders Tab -->
+            <div v-if="adminTab === 'orders'">
+                <!-- Filter -->
+                <div class="mb-3">
+                    <div class="btn-group">
+                        <button class="btn btn-sm" :class="orderFilter === 'all' ? 'btn-gold' : 'btn-outline-secondary'" @click="orderFilter='all'">All Active</button>
+                        <button class="btn btn-sm" :class="orderFilter === 'pending' ? 'btn-gold' : 'btn-outline-secondary'" @click="orderFilter='pending'">Pending Approval</button>
+                        <button class="btn btn-sm" :class="orderFilter === 'cooking' ? 'btn-gold' : 'btn-outline-secondary'" @click="orderFilter='cooking'">In Progress</button>
+                    </div>
+                </div>
+                
+                <div v-if="filteredOrders.length === 0" class="text-muted">No orders found.</div>
+                
+                <div v-for="o in filteredOrders" :key="o.id" class="order-card" :class="{'pending-approval': o.status === 'Pending'}">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <h5 class="mb-0">
+                                Order #{{ o.id }}
+                                <span class="status-badge ms-2" :class="'status-' + o.status.toLowerCase().replace(' ', '-')">{{ o.status }}</span>
+                            </h5>
+                            <small class="text-muted">{{ o.time }}</small>
+                            <span v-if="o.tableNumber" class="badge bg-info ms-2">Table {{ o.tableNumber }}</span>
+                        </div>
+                        <div class="text-end">
+                            <h5 class="text-gold mb-1">${{ o.total }}</h5>
+                            <span class="payment-badge" :class="o.paymentStatus === 'Paid' ? 'payment-paid' : 'payment-unpaid'">
+                                {{ o.paymentStatus || 'Unpaid' }}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- Items -->
+                    <div class="mb-3">
+                        <span v-for="i in o.items" class="badge bg-secondary me-1 mb-1">
+                            {{ i.qty }}x {{ i.name.en }}
+                        </span>
+                    </div>
+                    
+                    <div v-if="o.email" class="small text-muted mb-1"><i class="bi bi-envelope me-1"></i>{{ o.email }}</div>
+                    <div v-if="o.custNote" class="small text-warning mb-2"><i class="bi bi-chat-dots me-1"></i>{{ o.custNote }}</div>
+                    
+                    <!-- Waiter: Can modify items before approval -->
+                    <div v-if="o.status === 'Pending' && (currentRole === 'waiter' || currentRole === 'staff' || currentRole === 'manager')" class="mb-3 p-2 bg-dark rounded">
+                        <h6 class="text-warning"><i class="bi bi-pencil me-1"></i>Modify Order (Before Approval)</h6>
+                        <div v-for="(item, idx) in o.items" class="d-flex align-items-center gap-2 mb-2">
+                            <span class="flex-grow-1">{{ item.name.en }}</span>
+                            <input type="number" class="form-control form-control-sm" style="width: 60px;" v-model.number="item.qty" min="0">
+                            <button class="btn btn-sm btn-outline-danger" @click="removeOrderItem(o, idx)">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                        <button class="btn btn-sm btn-outline-info" @click="recalculateOrderTotal(o)">
+                            <i class="bi bi-calculator me-1"></i>Recalculate Total
+                        </button>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="d-flex flex-wrap gap-2 align-items-center">
+                        <!-- Status Change -->
+                        <select class="form-select form-select-sm w-auto" v-model="o.status" @change="updateOrderStatus(o)">
+                            <option>Pending</option>
+                            <option>Approved</option>
+                            <option>Cooking</option>
+                            <option>Ready</option>
+                            <option>Served</option>
+                            <option>Cancelled</option>
+                        </select>
+                        
+                        <!-- Payment Status -->
+                        <select class="form-select form-select-sm w-auto" v-model="o.paymentStatus" @change="saveOrders">
+                            <option value="Unpaid">Unpaid</option>
+                            <option value="Paid">Paid</option>
+                        </select>
+                        
+                        <!-- Payment Type (when Paid) -->
+                        <select v-if="o.paymentStatus === 'Paid'" class="form-select form-select-sm w-auto" v-model="o.paymentType" @change="saveOrders">
+                            <option value="Cash">Cash</option>
+                            <option value="Credit Card">Credit Card</option>
+                            <option value="Debit">Debit</option>
+                            <option value="Free">Free</option>
+                            <option value="Mix">Mix (Cash + Card)</option>
+                        </select>
+                        
+                        <!-- Quick Approve Button -->
+                        <button v-if="o.status === 'Pending'" class="btn btn-sm btn-success" @click="o.status = 'Approved'; updateOrderStatus(o)">
+                            <i class="bi bi-check-lg me-1"></i>Approve
+                        </button>
+                        
+                        <!-- Add Staff Comment -->
+                        <button class="btn btn-sm btn-outline-info" @click="o.showCommentBox = !o.showCommentBox">
+                            <i class="bi bi-chat"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Staff Comment Box -->
+                    <div v-if="o.showCommentBox" class="mt-3">
+                        <div class="input-group input-group-sm">
+                            <input type="text" class="form-control" v-model="o.newStaffComment" placeholder="Add comment for customer...">
+                            <button class="btn btn-gold" @click="addStaffComment(o)">Send</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Comments Display -->
+                    <div v-if="o.comments && o.comments.length" class="mt-2 pt-2 border-top border-secondary">
+                        <small class="text-muted">Comments:</small>
+                        <div v-for="c in o.comments" class="small" :class="c.from === 'customer' ? 'text-info' : 'text-warning'">
+                            <strong>{{ c.from }}:</strong> {{ c.text }} <span class="text-muted">({{ c.time }})</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Completed Orders (Staff sees last 10, Manager sees all in history tab) -->
+                <div v-if="currentRole === 'staff'" class="mt-4">
+                    <h5 class="text-muted">Recently Completed (Last 10)</h5>
+                    <div v-for="o in completedOrders.slice(-10).reverse()" :key="o.id" class="order-card">
+                        <div class="d-flex justify-content-between">
+                            <span>Order #{{ o.id }} <span class="status-badge status-served">{{ o.status }}</span></span>
+                            <span class="text-gold">${{ o.total }}</span>
+                        </div>
+                        <small class="text-muted">{{ o.time }}</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Categories Manager Tab (Manager Only) -->
+            <div v-if="adminTab === 'cats' && currentRole === 'manager'">
+                <div class="admin-panel">
+                    <h5 class="mb-3 text-gold">Manage Product Categories</h5>
+                    <div class="input-group mb-4">
+                        <input type="text" class="form-control" v-model="newCatName" placeholder="Enter new category name">
+                        <button class="btn btn-gold" @click="addCategory">Add Category</button>
+                    </div>
+                    <ul class="list-group">
+                        <li v-for="(cat, idx) in categoryList" class="list-group-item bg-dark text-white border-secondary d-flex justify-content-between align-items-center">
+                            {{ cat }}
+                            <button class="btn btn-sm btn-outline-danger" @click="removeCategory(idx)">Delete</button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Menu Editor Tab (Manager Only) -->
+            <div v-if="adminTab === 'menu' && currentRole === 'manager'">
+                <button class="btn btn-success mb-3" @click="addNewItem">+ Add New Item</button>
+                <div v-for="(item, idx) in menu" :key="idx" class="admin-panel mb-3">
+                    <div class="row g-2">
+                        <div class="col-md-4">
+                            <label>Name (EN)</label>
+                            <input class="form-control form-control-sm" v-model="item.name.en">
+                        </div>
+                        <div class="col-md-4">
+                            <label>Name (FR)</label>
+                            <input class="form-control form-control-sm" v-model="item.name.fr">
+                        </div>
+                         <div class="col-md-4">
+                            <label>Name (FA)</label>
+                            <input class="form-control form-control-sm" v-model="item.name.fa">
+                        </div>
+
+                        <div class="col-md-3">
+                            <label>Price</label>
+                            <input type="number" class="form-control form-control-sm" v-model="item.price">
+                        </div>
+                        <div class="col-md-3">
+                            <label>Category</label>
+                            <select class="form-select form-select-sm" v-model="item.category">
+                                <option v-for="cat in categoryList" :value="cat">{{ cat }}</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 d-grid align-items-end">
+                             <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" v-model="item.available">
+                                <label class="form-check-label text-white">Available to Order</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label>Desc (EN)</label>
+                            <textarea class="form-control form-control-sm" v-model="item.desc.en"></textarea>
+                        </div>
+                        <div class="col-md-4">
+                            <label>Desc (FR)</label>
+                            <textarea class="form-control form-control-sm" v-model="item.desc.fr"></textarea>
+                        </div>
+                        <div class="col-md-4">
+                            <label>Desc (FA)</label>
+                            <textarea class="form-control form-control-sm" v-model="item.desc.fa"></textarea>
+                        </div>
+
+                        <div class="col-12">
+                            <label>Image URLs (comma separated)</label>
+                            <input class="form-control form-control-sm" :value="item.images.join(', ')" @input="updateImages(item, $event)">
+                        </div>
+                        
+                        <div class="col-12 text-end mt-2">
+                            <button class="btn btn-outline-danger btn-sm" @click="deleteItem(idx)">Delete Item</button>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-primary mt-3" @click="saveMenu">Save Changes</button>
+            </div>
+
+            <!-- Order History Tab (Manager Only) -->
+            <div v-if="adminTab === 'history' && currentRole === 'manager'">
+                <h5 class="text-gold mb-3">Complete Order History</h5>
+                
+                <!-- Stats -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="admin-panel text-center">
+                            <h3 class="text-gold">{{ allOrders.length }}</h3>
+                            <small>Total Orders</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="admin-panel text-center">
+                            <h3 class="text-success">${{ totalRevenue }}</h3>
+                            <small>Total Revenue (Paid)</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="admin-panel text-center">
+                            <h3 class="text-warning">{{ pendingOrdersCount }}</h3>
+                            <small>Pending Approval</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="admin-panel text-center">
+                            <h3 class="text-info">{{ completedOrders.length }}</h3>
+                            <small>Completed</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- All Orders List -->
+                <div class="table-responsive">
+                    <table class="table table-dark table-striped">
+                        <thead>
+                            <tr>
+                                <th>Order #</th>
+                                <th>Table</th>
+                                <th>Time</th>
+                                <th>Items</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Payment</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="o in allOrders.slice().reverse()">
+                                <td>#{{ o.id }}</td>
+                                <td>{{ o.tableNumber || '-' }}</td>
+                                <td>{{ o.time }}</td>
+                                <td>{{ o.items.length }} items</td>
+                                <td class="text-gold">${{ o.total }}</td>
+                                <td><span class="status-badge" :class="'status-' + o.status.toLowerCase().replace(' ', '-')">{{ o.status }}</span></td>
+                                <td>
+                                    <span class="payment-badge" :class="o.paymentStatus === 'Paid' ? 'payment-paid' : 'payment-unpaid'">
+                                        {{ o.paymentStatus || 'Unpaid' }}
+                                    </span>
+                                    <small v-if="o.paymentType" class="d-block text-muted">{{ o.paymentType }}</small>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer mt-auto">
+        <div class="container">
+            <div class="row align-items-center text-center text-md-start">
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <h5>Roda Bar</h5>
+                    <p class="text-muted small mb-0">7359 Yonge St, Thornhill, ON<br>&copy; 2024 All rights reserved.</p>
+                </div>
+                <div class="col-md-4 mb-3 mb-md-0 text-center">
+                    <a href="tel:9057317632" class="d-block mb-1 text-gold"><i class="bi bi-telephone-fill me-2"></i>(905) 731-RODA</a>
+                    <a href="mailto:rodabar2025@gmail.com" class="d-block small">rodabar2025@gmail.com</a>
+                </div>
+                <div class="col-md-4 text-center text-md-end">
+                    <a href="https://www.google.com/maps/search/?api=1&query=Roda+Bar+Thornhill" target="_blank" class="btn btn-outline-light btn-sm mb-2">
+                        <i class="bi bi-google me-2"></i>{{ lang === 'fr' ? 'Avis Google' : (lang === 'fa' ? 'نظر در گوگل' : 'Google Review') }}
+                    </a>
+                    <div class="small text-muted">
+                        <i class="bi bi-star-fill text-gold"></i><i class="bi bi-star-fill text-gold"></i><i class="bi bi-star-fill text-gold"></i><i class="bi bi-star-fill text-gold"></i><i class="bi bi-star-fill text-gold"></i> (4.9/5)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+</div>
+
+<script src="menu-data.js" defer></script>
+<script defer>
+document.addEventListener('DOMContentLoaded', () => {
+    if (!window.RODA_MENU_DATA) {
+        alert("Menu failed to load. Check menu-data.js");
+        return;
+    };    
+const { createApp } = Vue;
+
+const ROLE_PINS = {
+    waiter: '1111',
+    staff: '2222',
+    manager: '3333'
+};
+const translations = {
+    en: {
+        menu: "Menu", cart: "Cart", track: "Track", ourMenu: "Our Menu", adminP: "Admin",
+        addToCart: "Add", soldOut: "Sold Out", yourOrder: "Your Order",
+        emptyCart: "Cart is empty.", backToMenu: "Back to Menu",
+        total: "Total", submitOrder: "Submit Order", note: "Note",
+        emailPlaceholder: "Email for receipt (optional)", notePlaceholder: "Allergies or special requests?",
+        trackTitle: "Track Your Order", enterOrderNum: "Enter Order #", status: "Status", recentOrders: "Your Recent Orders"
+    },
+    fr: {
+        menu: "Menu", cart: "Panier", track: "Suivre", ourMenu: "Notre Menu", adminP: "Admin",
+        addToCart: "Ajouter", soldOut: "Épuisé", yourOrder: "Votre Commande",
+        emptyCart: "Panier vide.", backToMenu: "Retour",
+        total: "Total", submitOrder: "Commander", note: "Note",
+        emailPlaceholder: "Email pour le reçu", notePlaceholder: "Allergies?",
+        trackTitle: "Suivre la commande", enterOrderNum: "Numéro #", status: "Statut", recentOrders: "Commandes récentes"
+    },
+    fa: {
+        menu: "منو", cart: "سبد خرید", track: "پیگیری", ourMenu: "منوی ما", adminP: "بخش مدیریت",
+        addToCart: "افزودن", soldOut: "تمام شده", yourOrder: "سفارش شما",
+        emptyCart: "سبد خالی است", backToMenu: "بازگشت",
+        total: "جمع کل", submitOrder: "ثبت سفارش", note: "توضیحات",
+        emailPlaceholder: "ایمیل برای رسید", notePlaceholder: "توضیحات خاص؟",
+        trackTitle: "پیگیری سفارش", enterOrderNum: "شماره سفارش #", status: "وضعیت", recentOrders: "سفارش‌های اخیر"
+    }
+};
+
+createApp({
+    data() {
+        return {
+            lang: 'en',
+            currentPage: 'menu',
+            menu: window.RODA_MENU_DATA,
+            cart: [],
+            cartBounce: false,
+            customerEmail: '',
+            customerNote: '',
+            tableNumber: '',
+            
+            // Categories
+            categoryList: [],
+            newCatName: '',
+
+            // Tracking
+            trackId: '',
+            trackStatus: null,
+            trackedOrder: null,
+            newComment: '',
+            myHistory: [],
+            allOrders: [],
+
+            // Role-based Authentication
+            currentRole: 'customer', // customer, waiter, staff, manager
+            loginRole: 'waiter',
+            adminPass: '',
+            adminTab: 'orders',
+            
+            // Order Filtering
+            orderFilter: 'all'
+        }
+    },
+    computed: {
+        t() { return translations[this.lang]; },
+        
+        activeCategories() {
+            return this.categoryList.filter(cat => {
+                return this.menu.some(item => item.category === cat && item.available);
+            });
+        },
+        
+        cartCount() { return this.cart.reduce((acc, i) => acc + i.qty, 0); },
+        cartTotal() { return this.cart.reduce((acc, i) => acc + i.price * i.qty, 0).toFixed(2); },
+        
+        // Order filtering based on role and filter selection
+        filteredOrders() {
+            let orders = this.allOrders.filter(o => !['Served', 'Cancelled'].includes(o.status));
+            
+            if (this.orderFilter === 'pending') {
+                orders = orders.filter(o => o.status === 'Pending');
+            } else if (this.orderFilter === 'cooking') {
+                orders = orders.filter(o => ['Approved', 'Cooking', 'Ready'].includes(o.status));
+            }
+            
+            return orders.slice().reverse();
+        },
+        
+        completedOrders() {
+            return this.allOrders.filter(o => ['Served', 'Cancelled'].includes(o.status));
+        },
+        
+        pendingOrdersCount() {
+            return this.allOrders.filter(o => o.status === 'Pending').length;
+        },
+        
+        totalRevenue() {
+            return this.allOrders
+                .filter(o => o.paymentStatus === 'Paid')
+                .reduce((sum, o) => sum + parseFloat(o.total), 0)
+                .toFixed(2);
+        }
+    },
+    
+    watch: {
+        // Animate floating cart when items added
+        cartCount(newVal, oldVal) {
+            if (newVal > oldVal) {
+                this.cartBounce = true;
+                setTimeout(() => { this.cartBounce = false; }, 300);
+            }
+        }
+    },
+    
+    created() {
+        // Load language preference
+        const savedLang = localStorage.getItem('roda_lang');
+        this.lang = savedLang || 'en';
+
+        // Load menu
+        const storedMenu = localStorage.getItem('roda_menu');
+        this.menu = storedMenu ? JSON.parse(storedMenu) : initialMenu;
+
+        // Load categories
+        const storedCats = localStorage.getItem('roda_cats');
+        this.categoryList = storedCats ? JSON.parse(storedCats) : ["Salads", "Appetizers", "Wings", "Mains", "Burger / Sandwich", "Drinks", "Dessert"];
+        
+        // Load orders
+        this.allOrders = JSON.parse(localStorage.getItem('roda_orders') || '[]');
+        this.myHistory = JSON.parse(localStorage.getItem('roda_history') || '[]');
+        
+        // Restore role session
+        const savedRole = sessionStorage.getItem('roda_role');
+        if (savedRole) {
+            this.currentRole = savedRole;
+        }
+        
+        // Initialize EmailJS
+        try { emailjs.init("FG_Aw6_G8kUJiDRqJ"); } catch(e){}
+    },
+    
+    methods: {
+        // ====== LANGUAGE ======
+        setLang(l) {
+            this.lang = l;
+            localStorage.setItem('roda_lang', l);
+        },
+        
+        // ====== MENU NAVIGATION ======
+        getItemsByCategory(cat) {
+            return this.menu.filter(i => i.category === cat && i.available);
+        },
+        
+        scrollToCategory(cat) {
+            const el = document.getElementById('cat-' + cat);
+            if(el) {
+                const y = el.getBoundingClientRect().top + window.pageYOffset - 150;
+                window.scrollTo({top: y, behavior: 'smooth'});
+            }
+        },
+        
+        // ====== CATEGORY MANAGEMENT (Manager Only) ======
+        addCategory() {
+            if(this.newCatName.trim()) {
+                this.categoryList.push(this.newCatName.trim());
+                this.newCatName = '';
+                this.saveCats();
+            }
+        },
+        
+        removeCategory(index) {
+            if(confirm('Delete this category? Items in this category will not be visible.')) {
+                this.categoryList.splice(index, 1);
+                this.saveCats();
+            }
+        },
+        
+        saveCats() {
+            localStorage.setItem('roda_cats', JSON.stringify(this.categoryList));
+        },
+
+        // ====== CART OPERATIONS ======
+        addToCart(item) {
+            const existing = this.cart.find(c => c.id === item.id);
+            if (existing) {
+                existing.qty += item.tempQty;
+            } else {
+                this.cart.push({ 
+                    ...item, 
+                    qty: item.tempQty, 
+                    image: item.images[0], 
+                    note: '' 
+                });
+            }
+            item.tempQty = 1;
+        },
+        
+        removeFromCart(index) {
+            this.cart.splice(index, 1);
+        },
+        
+        // ====== ORDER SUBMISSION (Customer) ======
+        submitOrder() {
+            if(!this.cart.length) return;
+            
+            const orderId = Math.floor(Math.random() * 9000) + 1000;
+            const newOrder = {
+                id: orderId,
+                items: JSON.parse(JSON.stringify(this.cart)),
+                total: this.cartTotal,
+                status: 'Pending', // Starts as pending - needs waiter approval
+                paymentStatus: 'Unpaid',
+                paymentType: 'Cash', // Default
+                email: this.customerEmail,
+                custNote: this.customerNote,
+                tableNumber: this.tableNumber,
+                time: new Date().toLocaleString(),
+                comments: [],
+                showCommentBox: false,
+                newStaffComment: ''
+            };
+            
+            this.allOrders.push(newOrder);
+            this.myHistory.push({ id: orderId, status: 'Pending', total: this.cartTotal, tableNumber: this.tableNumber });
+            
+            localStorage.setItem('roda_orders', JSON.stringify(this.allOrders));
+            localStorage.setItem('roda_history', JSON.stringify(this.myHistory));
+            
+            // Send email if provided
+            if(this.customerEmail) {
+                this.sendOrderEmail(newOrder);
+            }
+
+            alert(`Order #${orderId} submitted!\n\nYour order is pending approval by our staff.\n${this.customerEmail ? 'Check your email for confirmation.' : 'Use order number to track status.'}`);
+            
+            // Reset cart
+            this.cart = [];
+            this.customerNote = '';
+            this.customerEmail = '';
+            this.tableNumber = '';
+            
+            // Navigate to tracking
+            this.currentPage = 'track';
+            this.trackId = orderId;
+            this.trackOrder();
+        },
+        
+        sendOrderEmail(order) {
+            const itemsList = order.items.map(item => {
+                return `<tr>
+                    <td style="padding: 10px; border-bottom: 1px solid #eee;">
+                        <strong>${item.name.en}</strong><br>
+                        <small>Qty: ${item.qty}</small>
+                    </td>
+                    <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right;">
+                        $${(item.price * item.qty).toFixed(2)}
+                    </td>
+                </tr>`;
+            }).join('');
+
+            const emailParams = {
+                to_email: order.email,
+                order_id: order.id,
+                total_items: order.items.reduce((acc, i) => acc + i.qty, 0),
+                order_total: order.total,
+                customer_note: order.custNote || 'None',
+                table_number: order.tableNumber || 'Not specified',
+                order_time: order.time,
+                items_html: itemsList,
+                restaurant_name: "Roda Bar & Grill",
+                restaurant_address: "7359 Yonge St, Thornhill",
+                restaurant_phone: "(905) 731-RODA"
+            };
+
+            try { 
+                emailjs.send("service_ob2vx0c", "template_ealmonf", emailParams)
+                    .then(() => console.log("Receipt sent"))
+                    .catch(err => console.error("Email error:", err));
+            } catch(e) {
+                console.error("EmailJS error:", e);
+            }
+        },
+        
+        // ====== ORDER TRACKING (Customer) ======
+        trackOrder() {
+            const o = this.allOrders.find(x => x.id == this.trackId);
+            if (o) {
+                this.trackedOrder = o;
+                this.trackStatus = null;
+                
+                // Update local history
+                const historyItem = this.myHistory.find(h => h.id == this.trackId);
+                if (historyItem) {
+                    historyItem.status = o.status;
+                    localStorage.setItem('roda_history', JSON.stringify(this.myHistory));
+                }
+            } else {
+                this.trackedOrder = null;
+                this.trackStatus = "Order not found. Please check the order number.";
+            }
+        },
+        
+        getTimelineClass(step, currentStatus) {
+            const steps = ['Pending', 'Approved', 'Cooking', 'Ready', 'Served'];
+            const stepIndex = steps.indexOf(step);
+            const currentIndex = steps.indexOf(currentStatus);
+            
+            if (currentStatus === 'Cancelled') return '';
+            if (stepIndex < currentIndex) return 'completed';
+            if (stepIndex === currentIndex) return 'active';
+            return '';
+        },
+        
+        addCustomerComment() {
+            if (!this.newComment.trim() || !this.trackedOrder) return;
+            
+            if (!this.trackedOrder.comments) {
+                this.trackedOrder.comments = [];
+            }
+            
+            this.trackedOrder.comments.push({
+                from: 'customer',
+                text: this.newComment.trim(),
+                time: new Date().toLocaleTimeString()
+            });
+            
+            this.newComment = '';
+            this.saveOrders();
+        },
+        
+        // ====== AUTHENTICATION ======
+        loginAdmin() {
+            const correctPin = ROLE_PINS[this.loginRole];
+            
+            if (this.adminPass === correctPin) {
+                this.currentRole = this.loginRole;
+                sessionStorage.setItem('roda_role', this.loginRole);
+                this.adminPass = '';
+                this.adminTab = 'orders';
+            } else {
+                alert("Invalid PIN. Access Denied.");
+            }
+        },
+        
+        logout() {
+            this.currentRole = 'customer';
+            sessionStorage.removeItem('roda_role');
+            this.currentPage = 'menu';
+        },
+        
+        // ====== ORDER MANAGEMENT (Staff) ======
+        updateOrderStatus(order) {
+            this.saveOrders();
+            
+            // Send notification email when approved
+            if (order.status === 'Approved' && order.email) {
+                this.sendStatusUpdateEmail(order);
+            }
+        },
+        
+        sendStatusUpdateEmail(order) {
+            // You can implement status update emails here
+            console.log(`Order #${order.id} status updated to ${order.status}`);
+        },
+        
+        removeOrderItem(order, itemIndex) {
+            if (order.items.length > 1) {
+                order.items.splice(itemIndex, 1);
+                this.recalculateOrderTotal(order);
+            } else {
+                alert("Cannot remove the last item. Cancel the order instead.");
+            }
+        },
+        
+        recalculateOrderTotal(order) {
+            // Remove items with qty 0
+            order.items = order.items.filter(i => i.qty > 0);
+            
+            // Recalculate total
+            order.total = order.items.reduce((sum, i) => sum + (i.price * i.qty), 0).toFixed(2);
+            this.saveOrders();
+        },
+        
+        addStaffComment(order) {
+            if (!order.newStaffComment || !order.newStaffComment.trim()) return;
+            
+            if (!order.comments) {
+                order.comments = [];
+            }
+            
+            order.comments.push({
+                from: 'staff',
+                text: order.newStaffComment.trim(),
+                time: new Date().toLocaleTimeString()
+            });
+            
+            order.newStaffComment = '';
+            order.showCommentBox = false;
+            this.saveOrders();
+        },
+        
+        saveOrders() { 
+            localStorage.setItem('roda_orders', JSON.stringify(this.allOrders)); 
+        },
+        
+        // ====== MENU MANAGEMENT (Manager Only) ======
+        updateImages(item, event) { 
+            item.images = event.target.value.split(',').map(s => s.trim()).filter(s => s); 
+        },
+        
+        addNewItem() {
+            const defCat = this.categoryList.length > 0 ? this.categoryList[0] : "New";
+            this.menu.push({
+                id: Date.now(),
+                category: defCat,
+                price: 0,
+                available: false,
+                tempQty: 1,
+                name: { en: "New Item", fr: "Nouveau", fa: "جدید" },
+                desc: { en: "", fr: "", fa: "" },
+                images: ["https://via.placeholder.com/400x300?text=New+Item"]
+            });
+        },
+        
+        deleteItem(index) {
+            if(confirm("Delete this menu item?")) {
+                this.menu.splice(index, 1);
+                this.saveMenu();
+            }
+        },
+        
+        saveMenu() {
+            localStorage.setItem('roda_menu', JSON.stringify(this.menu));
+            alert("Menu saved successfully!");
+        }
+    }
+}).mount('#app');            });
+</script>
+</body>
+</html>

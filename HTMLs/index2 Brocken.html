@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roda Bar & Restaurant | Thornhill</title>
+    <meta name="description" content="Roda Bar & Restaurant - 7359 Yonge St, Thornhill.">
+    <link rel="icon"
+        href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiB2aWV3Qm94PSIwIDAgMjAwIDIwMCI+PGNpcmNsZSBjeD0iMTAwIiBjeT0iMTAwIiByPSI5OCIgZmlsbD0iIzAwMDAwMCIvPjxwYXRoIGQ9Ik0gNDUgMzUgQSA3NSA3NSAwIDAgMCA0NSAxNjUiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0M0QTA1MiIgc3Ryb2tlLXdpZHRoPSIyLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjx0ZXh0IHg9IjEwMCIgeT0iMTA1IiBmb250LWZhbWlseT0iJ0JydXNoIFNjcmlwdCBNVCcsIGN1cnNpdmUiIGZvbnQtc2l6ZT0iNTIiIGZpbGw9IiNDNEEwNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPlJvZGE8L3RleHQ+PHRleHQgeD0iMTMwIiB5PSIxNDAiIGZvbnQtZmFtaWx5PSInQnJ1c2ggU2NyaXB0IE1UJywgY3Vyc2l2ZSIgZm9udC1zaXplPSIyOCIgZmlsbD0iI0M0QTA1MiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+YmFyPC90ZXh0Pjwvc3ZnPg==">
+
+<!-- Bootstrap + Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <!-- YOUR SEPARATED CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Vue, Bootstrap JS, EmailJS -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+</head>
+<script>
+    // Enable Bootstrap tooltips
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    tooltipTriggerList.forEach(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+</script>
+
+<body>
+
+    <div id="app" class="app-overlay">
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+            <div class="container">
+                <a class="navbar-brand pulse-hover" href="#" @click.prevent="currentPage='menu'">
+                    <svg class="logo-svg" viewBox="0 0 24 24">
+                        <path
+                            d="M11 9H9V2H7v7H5V2H3v7c0 2.12 1.66 3.84 3.75 3.97V22h2.5v-9.03C11.34 12.84 13 11.12 13 9V2h-2v7zm5-3v8h2.5v8H21V2c-2.76 0-5 2.24-5 4z" />
+                    </svg>
+                    Roda Bar
+                </a>
+
+                <div class="d-flex align-items-center gap-3 order-lg-last ms-3">
+                    <div class="d-flex gap-2">
+                        <span class="lang-flag" :class="{active: lang==='en'}" @click="setLang('en')"
+                            title="English">🇺🇸</span>
+                        <span class="lang-flag" :class="{active: lang==='fr'}" @click="setLang('fr')"
+                            title="Français">🇫🇷</span>
+                        <span class="lang-flag" :class="{active: lang==='fa'}" @click="setLang('fa')"
+                            title="Farsi">🇮🇷</span>
+                    </div>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                </div>
+
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto text-uppercase small fw-bold">
+                        <li class="nav-item"><a class="nav-link" :class="{active: currentPage==='menu'}" href="#"
+                                @click="currentPage='menu'">{{ t.menu }}</a></li>
+                        <li class="nav-item"><a class="nav-link" :class="{active: currentPage==='cart'}" href="#"
+                                @click="currentPage='cart'">{{ t.cart }} ({{ cartCount }})</a></li>
+                        <li class="nav-item"><a class="nav-link" :class="{active: currentPage==='track'}" href="#"
+                                @click="currentPage='track'">{{ t.track }}</a></li>
+                        <li class="nav-item"><a class="nav-link" :class="{active: currentPage==='admin'}" href="#"
+                                @click="currentPage='admin'">{{ t.adminP }}</a></li>
+                    </ul>
+                </div>
+            </div>
+            <!-- Floating Cart Button (mobile only) -->
+            <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1050;">
+                <button @click="currentPage='cart'" class="btn btn-gold rounded-circle shadow-lg d-md-none"
+                    style="width:60px;height:60px;font-size:1.5rem;">
+                    <i class="bi bi-cart3"></i>
+                    <span v-if="cartCount>0"
+                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        {{ cartCount }}
+                    </span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- MENU PAGE -->
+        <div v-if="currentPage === 'menu'" class="fade-in">
+            <!-- Sticky Category Scroller -->
+            <div class="cat-scroller">
+                <div class="container text-center">
+                    <!-- Only show active categories -->
+                    <button v-for="cat in activeCategories" class="cat-btn" @click="scrollToCategory(cat)">
+                        {{ cat }}
+                    </button>
+                </div>
+            </div>
+
+            <div class="container pb-5">
+                <h2 class="text-center mb-5 text-gold" style="font-family:'Great Vibes'; font-size: 3rem;">{{ t.ourMenu
+                    }}</h2>
+
+                <!-- Loop through ACTIVE categories -->
+                <div v-for="cat in activeCategories" :key="cat" :id="'cat-'+cat" class="mb-5">
+                    <h3 class="text-gold border-bottom border-secondary pb-2 mb-4">{{ cat }}</h3>
+
+                    <div class="row g-4">
+                        <div class="col-md-6 col-lg-4" v-for="item in getItemsByCategory(cat)" :key="item.id">
+                            <!-- Item Card -->
+                            <div class="item-card">
+                                <div :id="'carousel-'+item.id" class="carousel slide card-img-wrapper"
+                                    data-bs-ride="carousel">
+                                    <div class="carousel-inner h-100">
+                                        <div v-for="(img, index) in item.images"
+                                            :class="['carousel-item', 'h-100', {active: index===0}]">
+                                            <img :src="img" :alt="item.name[lang]">
+                                        </div>
+                                    </div>
+                                    <button v-if="item.images.length > 1" class="carousel-control-prev" type="button"
+                                        :data-bs-target="'#carousel-'+item.id" data-bs-slide="prev">
+                                        <span class="carousel-control-prev-icon"></span>
+                                    </button>
+                                    <button v-if="item.images.length > 1" class="carousel-control-next" type="button"
+                                        :data-bs-target="'#carousel-'+item.id" data-bs-slide="next">
+                                        <span class="carousel-control-next-icon"></span>
+                                    </button>
+                                </div>
+
+                                <div class="p-3 d-flex flex-column flex-grow-1">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <h5 class="mb-1">{{ item.name[lang] }}</h5>
+                                        <span class="text-gold fw-bold">${{ item.price.toFixed(2) }}</span>
+                                    </div>
+                                    <p class="small text-secondary flex-grow-1">{{ item.desc[lang] }}</p>
+
+                                    <div v-if="item.available" class="mt-auto">
+                                        <div class="input-group">
+                                            <input type="number"
+                                                class="form-control text-center bg-dark text-white border-secondary"
+                                                v-model.number="item.tempQty" min="1" max="10">
+                                            <button class="btn btn-gold w-50" @click="addToCart(item)">{{ t.addToCart
+                                                }}</button>
+                                        </div>
+                                    </div>
+                                    <div v-else
+                                        class="mt-auto text-danger fw-bold text-center border border-danger p-2 rounded">
+                                        {{ t.soldOut }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CART PAGE -->
+        <div v-if="currentPage === 'cart'" class="container page-section fade-in">
+            <h2 class="text-center mb-4 text-gold">{{ t.yourOrder }}</h2>
+            <div v-if="cart.length === 0" class="text-center py-5">
+                <p class="fs-4 text-muted">{{ t.emptyCart }}</p>
+                <button class="btn btn-gold mt-3" @click="currentPage='menu'">{{ t.backToMenu }}</button>
+            </div>
+            <div v-else class="row justify-content-center">
+                <div class="col-lg-8">
+                    <ul class="list-group mb-4">
+                        <li v-for="(item, index) in cart"
+                            class="list-group-item bg-dark text-white border-secondary d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center gap-3">
+                                <img :src="item.image"
+                                    style="width: 50px; height: 50px; object-fit: cover; border-radius: 6px;">
+                                <div>
+                                    <h6 class="mb-0">{{ item.name[lang] }} <span class="text-gold">x{{ item.qty
+                                            }}</span></h6>
+                                    <small class="text-muted" v-if="item.note">{{ t.note }}: {{ item.note }}</small>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <div class="fw-bold">${{ (item.price * item.qty).toFixed(2) }}</div>
+                                <button class="btn btn-sm btn-outline-danger mt-1 py-0"
+                                    @click="removeFromCart(index)">x</button>
+                            </div>
+                        </li>
+                    </ul>
+                    <!-- Much clearer Email & Note fields -->
+                    <div class="admin-panel text-center py-4">
+                        <h3 class="mb-4">{{ t.total }}: <span class="text-gold fs-2">${{ cartTotal }}</span></h3>
+
+                        <!-- Email field – clear icon + tooltip -->
+                        <div class="position-relative mb-3">
+                            <div class="mb-4">
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-text bg-dark border-gold text-gold">
+                                        <i class="bi bi-envelope-fill"></i>
+                                    </span>
+                                    <input type="email"
+                                        class="form-control bg-black text-white border-gold placeholder-gold"
+                                        v-model="customerEmail" placeholder="Your email (for receipt & updates)"
+                                        aria-label="Email for receipt">
+                                    <span class="input-group-text bg-dark border-gold text-gold"
+                                        data-bs-toggle="tooltip" data-bs-placement="top"
+                                        title="We'll send your receipt and order status here">
+                                        <i class="bi bi-info-circle"></i>
+                                    </span>
+                                </div>
+                                <small class="text-muted d-block mt-1">Optional – but recommended so you get
+                                    confirmation!</small>
+                            </div>
+
+                            <!-- Note field – clear icon + tooltip -->
+                            <div class="mb-4">
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-text bg-dark border-gold text-gold">
+                                        <i class="bi bi-chat-dots-fill"></i>
+                                    </span>
+                                    <textarea class="form-control bg-black text-white border-gold placeholder-gold"
+                                        rows="3" v-model="customerNote"
+                                        placeholder="Allergies, special requests, table number, or message to chef (e.g. 'No onions', 'Extra spicy', 'Table 7')"
+                                        aria-label="Special requests or allergies"></textarea>
+                                    <span class="input-group-text bg-dark border-gold text-gold"
+                                        data-bs-toggle="tooltip" data-bs-placement="top"
+                                        title="Let us know any allergies or special instructions">
+                                        <i class="bi bi-exclamation-triangle-fill text-warning"></i>
+                                    </span>
+                                </div>
+                                <small class="text-muted d-block mt-1">Very helpful for the kitchen – thank you!</small>
+                            </div>
+
+                            <!-- Submit button -->
+                            <button class="btn btn-gold btn-lg w-100 py-3 fs-5 shadow-lg pulse-hover"
+                                @click="submitOrder">
+                                <i class="bi bi-send-fill me-2"></i> Submit Order – ${{ cartTotal }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TRACK PAGE -->
+            <div v-if="currentPage === 'track'" class="container page-section fade-in">
+                <h2 class="text-center text-gold mb-4">{{ t.trackTitle }}</h2>
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <div class="input-group mb-4">
+                            <input type="text" class="form-control" v-model="trackId" :placeholder="t.enterOrderNum">
+                            <button class="btn btn-gold" @click="trackOrder">{{ t.track }}</button>
+                        </div>
+                        <div v-if="trackStatus" class="alert alert-dark border-gold text-center">
+                            <h4>{{ t.status }}: <span class="text-gold">{{ trackStatus }}</span></h4>
+                        </div>
+                    </div>
+                </div>
+                <h4 class="mt-5 text-muted">{{ t.recentOrders }}</h4>
+                <div class="list-group">
+                    <button v-for="order in myHistory"
+                        class="list-group-item list-group-item-action bg-dark text-white border-secondary"
+                        @click="trackId = order.id; trackOrder()">
+                        #{{ order.id }} - <span class="text-gold">{{ order.status }}</span> - ${{ order.total }}
+                    </button>
+                </div>
+            </div>
+
+            <!-- ADMIN PAGE -->
+            <div v-if="currentPage === 'admin'" class="container page-section fade-in">
+                <h2 class="text-gold mb-4">Admin Dashboard</h2>
+
+                <div v-if="!isAdmin" class="row justify-content-center">
+                    <div class="col-md-4">
+                        <div class="admin-panel text-center">
+                            <h5 class="mb-3 text-white">Secure Login</h5>
+                            <input type="password" class="form-control mb-3" v-model="adminPass"
+                                placeholder="Enter Password">
+                            <button class="btn btn-gold w-100" @click="loginAdmin">Login</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div v-else>
+                    <ul class="nav nav-tabs mb-4">
+                        <li class="nav-item"><a class="nav-link" :class="{active: adminTab==='orders'}" href="#"
+                                @click="adminTab='orders'">Active Orders</a></li>
+                        <li class="nav-item"><a class="nav-link" :class="{active: adminTab==='cats'}" href="#"
+                                @click="adminTab='cats'">Categories</a></li>
+                        <li class="nav-item"><a class="nav-link" :class="{active: adminTab==='menu'}" href="#"
+                                @click="adminTab='menu'">Menu Manager</a></li>
+                    </ul>
+
+                    <!-- Orders Tab -->
+                    <div v-if="adminTab === 'orders'">
+                        <div v-if="allOrders.length === 0" class="text-muted">No orders yet.</div>
+                        <div v-for="o in allOrders.slice().reverse()" class="admin-panel mb-3">
+                            <div class="d-flex justify-content-between">
+                                <h5>Order #{{ o.id }} <small class="text-muted">{{ o.time }}</small></h5>
+                                <h5 class="text-gold">${{ o.total }}</h5>
+                            </div>
+                            <p class="mb-2"><span v-for="i in o.items" class="badge bg-secondary me-1">{{ i.qty }}x {{
+                                    i.name.en }}</span></p>
+                            <p v-if="o.email" class="small text-muted">User: {{ o.email }}</p>
+                            <p v-if="o.custNote" class="small text-warning">Note: {{ o.custNote }}</p>
+                            <select class="form-select w-auto" v-model="o.status" @change="saveOrders">
+                                <option>Submitted</option>
+                                <option>Cooking</option>
+                                <option>Ready</option>
+                                <option>Served</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Categories Manager Tab -->
+                    <div v-if="adminTab === 'cats'">
+                        <div class="admin-panel">
+                            <h5 class="mb-3 text-gold">Manage Product Categories</h5>
+                            <div class="input-group mb-4">
+                                <input type="text" class="form-control" v-model="newCatName"
+                                    placeholder="Enter new category name">
+                                <button class="btn btn-gold" @click="addCategory">Add Category</button>
+                            </div>
+                            <ul class="list-group">
+                                <li v-for="(cat, idx) in categoryList"
+                                    class="list-group-item bg-dark text-white border-secondary d-flex justify-content-between align-items-center">
+                                    {{ cat }}
+                                    <button class="btn btn-sm btn-outline-danger"
+                                        @click="removeCategory(idx)">Delete</button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Menu Editor Tab -->
+                    <div v-if="adminTab === 'menu'">
+                        <button class="btn btn-success mb-3" @click="addNewItem">+ Add New Item</button>
+                        <div v-for="(item, idx) in menu" :key="idx" class="admin-panel mb-3">
+                            <div class="row g-2">
+                                <!-- Names -->
+                                <div class="col-md-4">
+                                    <label>Name (EN)</label>
+                                    <input class="form-control form-control-sm" v-model="item.name.en">
+                                </div>
+                                <div class="col-md-4">
+                                    <label>Name (FR)</label>
+                                    <input class="form-control form-control-sm" v-model="item.name.fr">
+                                </div>
+                                <div class="col-md-4">
+                                    <label>Name (FA)</label>
+                                    <input class="form-control form-control-sm" v-model="item.name.fa">
+                                </div>
+
+                                <!-- Details (Category is now a SELECT) -->
+                                <div class="col-md-3">
+                                    <label>Price</label>
+                                    <input type="number" class="form-control form-control-sm" v-model="item.price">
+                                </div>
+                                <div class="col-md-3">
+                                    <label>Category</label>
+                                    <select class="form-select form-select-sm" v-model="item.category">
+                                        <option v-for="cat in categoryList" :value="cat">{{ cat }}</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 d-grid align-items-end">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" v-model="item.available">
+                                        <label class="form-check-label text-white">Available to Order</label>
+                                    </div>
+                                </div>
+
+                                <!-- Descriptions -->
+                                <div class="col-md-4">
+                                    <label>Desc (EN)</label>
+                                    <textarea class="form-control form-control-sm" v-model="item.desc.en"></textarea>
+                                </div>
+                                <div class="col-md-4">
+                                    <label>Desc (FR)</label>
+                                    <textarea class="form-control form-control-sm" v-model="item.desc.fr"></textarea>
+                                </div>
+                                <div class="col-md-4">
+                                    <label>Desc (FA)</label>
+                                    <textarea class="form-control form-control-sm" v-model="item.desc.fa"></textarea>
+                                </div>
+
+                                <div class="col-12">
+                                    <label>Image URLs (comma separated)</label>
+                                    <input class="form-control form-control-sm" :value="item.images.join(', ')"
+                                        @input="updateImages(item, $event)">
+                                </div>
+
+                                <div class="col-12 text-end mt-2">
+                                    <button class="btn btn-outline-danger btn-sm" @click="deleteItem(idx)">Delete
+                                        Item</button>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary mt-3" @click="saveMenu">Save Changes</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <footer class="footer mt-auto">
+                <div class="container">
+                    <div class="row align-items-center text-center text-md-start">
+                        <div class="col-md-4 mb-3 mb-md-0">
+                            <h5>Roda Bar</h5>
+                            <p class="text-muted small mb-0">7359 Yonge St, Thornhill, ON<br>&copy; 2024 All rights
+                                reserved.</p>
+                        </div>
+                        <div class="col-md-4 mb-3 mb-md-0 text-center">
+                            <a href="tel:9057317632" class="d-block mb-1 text-gold"><i
+                                    class="bi bi-telephone-fill me-2"></i>(905) 731-RODA</a>
+                            <a href="mailto:rodabar2025@gmail.com" class="d-block small">rodabar2025@gmail.com</a>
+                        </div>
+                        <div class="col-md-4 text-center text-md-end">
+                            <a href="https://www.google.com/maps/search/?api=1&query=Roda+Bar+Thornhill" target="_blank"
+                                class="btn btn-outline-light btn-sm mb-2">
+                                <i class="bi bi-google me-2"></i>{{ lang === 'fr' ? 'Avis Google' : (lang === 'fa' ? 'نظر در گوگل' : 'Google Review') }}
+                            </a>
+                            <div class="small text-muted">
+                                <i class="bi bi-star-fill text-gold"></i><i class="bi bi-star-fill text-gold"></i><i
+                                    class="bi bi-star-fill text-gold"></i><i class="bi bi-star-fill text-gold"></i><i
+                                    class="bi bi-star-fill text-gold"></i> (4.9/5)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+        <script src="menu-data.js" defer></script>
+        <script defer>
+            // Wait for menu-data.js to load, then start Vue
+            document.addEventListener('DOMContentLoaded', () => {
+                if (!window.RODA_MENU_DATA) {
+                    alert("Menu failed to load. Check menu-data.js");
+                    return;
+                };
+                const { createApp } = Vue;
+                const ROLE_PINS = {
+                    waiter: '1111',
+                    staff: '2222',
+                    manager: '3333'
+                };
+
+                const translations = {
+                    en: {
+                        menu: "Menu", cart: "Cart", track: "Track", ourMenu: "Our Menu", adminP: "Admin",
+                        addToCart: "Add", soldOut: "Sold Out", yourOrder: "Your Order",
+                        emptyCart: "Cart is empty.", backToMenu: "Back to Menu",
+                        total: "Total", submitOrder: "Submit Order", note: "Note",
+                        emailPlaceholder: "Email for receipt", notePlaceholder: "Allergies or Requests?",
+                        trackTitle: "Track Order", enterOrderNum: "Enter Order #", status: "Status", recentOrders: "Recent Orders"
+                    },
+                    fr: {
+                        menu: "Menu", cart: "Panier", track: "Suivre", ourMenu: "Notre Menu", adminP: "Admin",
+                        addToCart: "Ajouter", soldOut: "Épuisé", yourOrder: "Votre Commande",
+                        emptyCart: "Panier vide.", backToMenu: "Retour",
+                        total: "Total", submitOrder: "Commander", note: "Note",
+                        emailPlaceholder: "Email pour le reçu", notePlaceholder: "Allergies?",
+                        trackTitle: "Suivre la commande", enterOrderNum: "Numéro #", status: "Statut", recentOrders: "Commandes récentes"
+                    },
+                    fa: {
+                        menu: "منو", cart: "سبد خرید", track: "پیگیری", ourMenu: "منوی ما", adminP: "بخش مدیریت",
+                        addToCart: "افزودن", soldOut: "تمام شده", yourOrder: "سفارش شما",
+                        emptyCart: "سبد خالی است", backToMenu: "بازگشت",
+                        total: "جمع کل", submitOrder: "ثبت سفارش", note: "توضیحات",
+                        emailPlaceholder: "ایمیل برای رسید", notePlaceholder: "توضیحات خاص؟",
+                        trackTitle: "پیگیری سفارش", enterOrderNum: "شماره سفارش #", status: "وضعیت", recentOrders: "سفارش‌های اخیر"
+                    }
+                };
+                createApp({
+                    data() {
+                        return {
+                            lang: 'en',
+                            currentPage: 'menu',
+                            menu: window.RODA_MENU_DATA,
+                            cart: [],
+                            customerEmail: '',
+                            customerNote: '',
+
+                            // Categories
+                            categoryList: [], // List of all categories (active or not)
+                            newCatName: '',
+
+                            // Tracking
+                            trackId: '',
+                            trackStatus: null,
+                            myHistory: [],
+                            allOrders: [],
+
+                            // Admin
+                            isAdmin: false,
+                            adminPass: '',
+                            adminTab: 'orders'
+                        }
+                    },
+                    computed: {
+                        t() { return translations[this.lang]; },
+                        // Only show categories that exist in list AND have available items
+                        activeCategories() {
+                            return this.categoryList.filter(cat => {
+                                return this.menu.some(item => item.category === cat && item.available);
+                            });
+                        },
+                        filteredItems() { return this.menu.filter(i => i.category === this.selectedCategory); },
+                        cartCount() { return this.cart.reduce((acc, i) => acc + i.qty, 0); },
+                        cartTotal() { return this.cart.reduce((acc, i) => acc + i.price * i.qty, 0).toFixed(2); }
+                    },
+                    created() {
+                        const savedLang = localStorage.getItem('roda_lang');
+                        this.lang = savedLang || 'en';
+
+                        const storedMenu = localStorage.getItem('roda_menu');
+                        this.menu = storedMenu ? JSON.parse(storedMenu) : initialMenu;
+
+                        // Load Categories
+                        const storedCats = localStorage.getItem('roda_cats');
+                        this.categoryList = storedCats ? JSON.parse(storedCats) : ["Salads", "Appetizers", "Wings", "Mains", "Burger / Sandwich", "Drinks", "Dessert"];
+
+                        this.allOrders = JSON.parse(localStorage.getItem('roda_orders') || '[]');
+                        this.myHistory = JSON.parse(localStorage.getItem('roda_history') || '[]');
+                        // Restore role session
+                        const savedRole = sessionStorage.getItem('roda_role');
+                        if (savedRole) {
+                            this.currentRole = savedRole;
+                        }
+                        try { emailjs.init("FG_Aw6_G8kUJiDRqJ"); } catch (e) { }
+                    },
+                    methods: {
+                        setLang(l) {
+                            this.lang = l;
+                            localStorage.setItem('roda_lang', l);
+                        },
+                        getItemsByCategory(cat) {
+                            return this.menu.filter(i => i.category === cat && i.available);
+                        },
+                        scrollToCategory(cat) {
+                            const el = document.getElementById('cat-' + cat);
+                            if (el) {
+                                const y = el.getBoundingClientRect().top + window.pageYOffset - 150;
+                                window.scrollTo({ top: y, behavior: 'smooth' });
+                            }
+                        },
+
+                        // Category Management
+                        addCategory() {
+                            if (this.newCatName.trim()) {
+                                this.categoryList.push(this.newCatName.trim());
+                                this.newCatName = '';
+                                this.saveCats();
+                            }
+                        },
+                        removeCategory(index) {
+                            if (confirm('Delete this category?')) {
+                                this.categoryList.splice(index, 1);
+                                this.saveCats();
+                            }
+                        },
+                        saveCats() {
+                            localStorage.setItem('roda_cats', JSON.stringify(this.categoryList));
+                        },
+
+                        // Cart & Orders
+                        addToCart(item) {
+                            this.cart.push({ ...item, qty: item.tempQty, image: item.images[0], note: this.customerNote });
+                            item.tempQty = 1;
+                        },
+                        removeFromCart(index) {
+                            this.cart.splice(index, 1);
+                        },
+                        submitOrder() {
+                            if (!this.cart.length) return;
+                            const orderId = Math.floor(Math.random() * 9000) + 1000;
+                            const newOrder = {
+                                id: orderId,
+                                items: JSON.parse(JSON.stringify(this.cart)),
+                                total: this.cartTotal,
+                                status: 'Submitted',
+                                email: this.customerEmail,
+                                custNote: this.customerNote,
+                                time: new Date().toLocaleString()
+                            };
+                            this.allOrders.push(newOrder);
+                            this.myHistory.push(newOrder);
+                            localStorage.setItem('roda_orders', JSON.stringify(this.allOrders));
+                            localStorage.setItem('roda_history', JSON.stringify(this.myHistory));
+                            // Prepare Email Data
+                            if (this.customerEmail) {
+                                // Build items list for email
+                                const itemsList = this.cart.map(item => {
+                                    return `
+                        <tr style="vertical-align: top; border-bottom: 1px solid #eee;">
+                            <td style="padding: 16px 8px 16px 4px; width: 80px;">
+                                <img style="width: 70px; height: 70px; object-fit: cover; border-radius: 8px; border: 2px solid #C4A052;" 
+                                    src="${item.image}" alt="${item.name[this.lang]}" />
+                            </td>
+                            <td style="padding: 16px 8px; width: 100%;">
+                                <div style="font-weight: 600; color: #000; font-size: 15px;">${item.name.en}</div>
+                                <div style="font-size: 13px; color: #666; padding-top: 4px;">Quantity: ${item.qty}</div>
+                                ${item.note ? `<div style="font-size: 12px; color: #C4A052; padding-top: 4px; font-style: italic;">Note: ${item.note}</div>` : ''}
+                            </td>
+                            <td style="padding: 16px 8px 16px 0; white-space: nowrap; text-align: right; vertical-align: middle;">
+                                <strong style="font-size: 16px; color: #C4A052;">$${(item.price * item.qty).toFixed(2)}</strong>
+                            </td>
+                        </tr>
+                    `;
+                                }).join('');
+
+                                const totalItems = this.cart.reduce((acc, item) => acc + item.qty, 0);
+
+                                const emailParams = {
+                                    to_email: this.customerEmail,
+                                    order_id: orderId,
+                                    total_items: totalItems,
+                                    order_total: this.cartTotal,
+                                    customer_note: this.customerNote || 'No special requests',
+                                    order_time: newOrder.time,
+                                    items_html: itemsList,
+                                    restaurant_name: "Roda Bar & Grill",
+                                    restaurant_address: "123 Main Street, Your City",
+                                    restaurant_phone: "(555) 123-4567"
+                                };
+
+                                try {
+                                    emailjs.send("service_ob2vx0c", "template_ealmonf", emailParams)
+                                        .then(() => console.log("Receipt sent successfully"))
+                                        .catch(err => console.error("Email error:", err));
+                                } catch (e) {
+                                    console.error("EmailJS error:", e);
+                                }
+                            }
+
+                            alert(`Order #${orderId} submitted! ${this.customerEmail ? 'Check your email for confirmation.' : ''}`);
+                            this.cart = [];
+                            this.customerNote = '';
+                            this.customerEmail = '';
+                            this.currentPage = 'track';
+                            this.trackId = orderId;
+                            this.trackOrder();
+                        },
+                        trackOrder() {
+                            const o = this.allOrders.find(x => x.id == this.trackId);
+                            this.trackStatus = o ? o.status : "Not found";
+                        },
+
+                        // Admin Login
+                        hashString(str) {
+                            let hash = 5381;
+                            for (let i = 0; i < str.length; i++) hash = ((hash << 5) + hash) + str.charCodeAt(i);
+                            return hash;
+                        },
+                        loginAdmin() {
+                            const inputHash = this.hashString(this.adminPass);
+                            if (inputHash === -42584694) {
+                                this.isAdmin = true;
+                                this.adminPass = '';
+                            } else {
+                                alert("Access Denied");
+                            }
+                        },
+
+                        saveOrders() { localStorage.setItem('roda_orders', JSON.stringify(this.allOrders)); },
+                        updateImages(item, event) { item.images = event.target.value.split(',').map(s => s.trim()); },
+                        addNewItem() {
+                            // Default to first category if available
+                            const defCat = this.categoryList.length > 0 ? this.categoryList[0] : "New";
+                            this.menu.push({
+                                id: Date.now(),
+                                category: defCat,
+                                price: 0,
+                                available: false,
+                                tempQty: 1,
+                                name: { en: "New", fr: "Nouveau", fa: "جدید" },
+                                desc: { en: "", fr: "", fa: "" },
+                                images: ["https://via.placeholder.com/300"]
+                            });
+                        },
+                        deleteItem(index) {
+                            if (confirm("Delete item?")) {
+                                this.menu.splice(index, 1);
+                                this.saveMenu();
+                            }
+                        },
+                        saveMenu() {
+                            localStorage.setItem('roda_menu', JSON.stringify(this.menu));
+                            alert("Menu updated!");
+                        }
+                    }
+                }).mount('#app');
+            });
+        </script>
+</body>
+
+</html>
