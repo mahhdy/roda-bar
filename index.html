@@ -922,7 +922,7 @@ createApp({
 
         // Load Categories
         const storedCats = localStorage.getItem('roda_cats');
-        this.categoryList = storedCats ? JSON.parse(storedCats) : ["Salads", "Appetizers", "Main", "Drinks", "Dessert"];
+        this.categoryList = storedCats ? JSON.parse(storedCats) : ["Salads", "Appetizers","Wings", "Mains", "Burger / Sandwich", "Drinks", "Dessert"];
         
         this.allOrders = JSON.parse(localStorage.getItem('roda_orders') || '[]');
         this.myHistory = JSON.parse(localStorage.getItem('roda_history') || '[]');
